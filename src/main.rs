@@ -1,17 +1,16 @@
-use actix_web::{get, App, HttpResponse, HttpServer, Responder};
+use actix_web::{App, HttpServer};
 
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
+mod routes;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .service(hello)
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+    let host = "127.0.0.1";
+    let port = 8080;
+    let server = HttpServer::new(|| App::new().service(routes::hello))
+        .bind((host, port))?
+        .run();
+
+    println!("Server started at http://{}:{}", host, port);
+
+    server.await
 }
