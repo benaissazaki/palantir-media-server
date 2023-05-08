@@ -4,10 +4,17 @@ mod routes;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let host = "127.0.0.1";
-    let port = 8080;
+    let mut args = std::env::args().skip(1);
+
+    let host = args.next().unwrap_or("127.0.0.1".to_string());
+    let port = args
+        .next()
+        .unwrap_or("8080".to_string())
+        .parse::<u16>()
+        .unwrap();
+
     let server = HttpServer::new(|| App::new().service(routes::hello))
-        .bind((host, port))?
+        .bind((host.clone(), port))?
         .run();
 
     println!("Server started at http://{}:{}", host, port);
