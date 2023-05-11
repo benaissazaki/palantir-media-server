@@ -1,6 +1,7 @@
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpServer};
 
 mod routes;
+mod settings;
 
 fn get_host_and_port() -> (String, u16) {
     let mut args = std::env::args().skip(1);
@@ -20,9 +21,13 @@ fn get_host_and_port() -> (String, u16) {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let (host, port) = get_host_and_port();
-    let server = HttpServer::new(|| App::new().service(routes::hello))
-        .bind((host.clone(), port))?
-        .run();
+    let server = HttpServer::new(|| {
+        App::new()
+            .service(routes::hello)
+            .service(web::scope("/api").service(routes::get_setting))
+    })
+    .bind((host.clone(), port))?
+    .run();
 
     println!("Server started at http://{}:{}", host, port);
 

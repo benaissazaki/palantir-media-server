@@ -6,7 +6,7 @@ use std::{
 
 const SETTING_FILE_NAME: &str = "app_settings.json";
 
-pub fn get_setting(setting_name: &str) -> Option<serde_json::Value> {
+pub fn get_setting(setting_name: String) -> Option<serde_json::Value> {
     // Open the settings file
     let mut file = match std::fs::File::open(SETTING_FILE_NAME) {
         Ok(f) => f,
