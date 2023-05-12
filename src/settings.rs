@@ -30,7 +30,7 @@ pub fn get_setting(setting_name: String) -> Option<serde_json::Value> {
 }
 
 pub fn set_setting(
-    setting_name: &str,
+    setting_name: String,
     setting_value: serde_json::Value,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let mut file = OpenOptions::new()

@@ -24,7 +24,7 @@ async fn main() -> std::io::Result<()> {
     let server = HttpServer::new(|| {
         App::new()
             .service(routes::hello)
-            .service(web::scope("/api").service(routes::get_setting))
+            .service(web::scope("/api").service(routes::get_setting).service(routes::set_setting))
     })
     .bind((host.clone(), port))?
     .run();
