@@ -1,4 +1,5 @@
 use actix_web::{get, post, web, HttpResponse, Responder};
+use serde;
 
 use crate::settings;
 
@@ -19,12 +20,17 @@ pub async fn get_setting(setting_name: web::Path<String>) -> impl Responder {
         .body(response.to_string())
 }
 
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct SetSettingRequest {
+    value: serde_json::Value,
+}
+
 #[post("/setting/{setting_name}")]
 pub async fn set_setting(
     setting_name: web::Path<String>,
-    setting_value: web::Json<serde_json::Value>,
+    setting_value: web::Json<SetSettingRequest>,
 ) -> impl Responder {
-    match settings::set_setting(setting_name.into_inner(), setting_value.into_inner()["value"].clone()) {
+    match settings::set_setting(setting_name.into_inner(), setting_value.into_inner().value) {
         Ok(_) => return HttpResponse::Created().finish(),
         Err(_) => return HttpResponse::UnprocessableEntity().finish(),
     };
