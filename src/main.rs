@@ -1,5 +1,6 @@
 use actix_web::{web, App, HttpServer};
 
+mod directory_scanner;
 mod routes;
 mod settings;
 
@@ -22,9 +23,11 @@ fn get_host_and_port() -> (String, u16) {
 async fn main() -> std::io::Result<()> {
     let (host, port) = get_host_and_port();
     let server = HttpServer::new(|| {
-        App::new()
-            .service(routes::hello)
-            .service(web::scope("/api").service(routes::get_setting).service(routes::set_setting))
+        App::new().service(routes::hello).service(
+            web::scope("/api")
+                .service(routes::get_setting)
+                .service(routes::set_setting),
+        )
     })
     .bind((host.clone(), port))?
     .run();
