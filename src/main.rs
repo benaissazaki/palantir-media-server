@@ -26,7 +26,8 @@ async fn main() -> std::io::Result<()> {
         App::new().service(routes::hello).service(
             web::scope("/api")
                 .service(routes::get_setting)
-                .service(routes::set_setting),
+                .service(routes::set_setting)
+                .service(routes::get_media_files),
         )
     })
     .bind((host.clone(), port))?
