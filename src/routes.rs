@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use actix_files;
 use actix_web::{get, post, web, HttpResponse, Responder};
 use serde;
 
@@ -62,5 +63,14 @@ pub async fn get_media_files() -> impl Responder {
         "items": media_files
     });
 
-    return HttpResponse::Ok().content_type("application/json").body(response.to_string());
+    return HttpResponse::Ok()
+        .content_type("application/json")
+        .body(response.to_string());
+}
+
+#[get("/media/{media_name}")]
+pub async fn get_media_file(
+    media_file_str: web::Path<String>,
+) -> impl Responder {
+    actix_files::NamedFile::open(media_file_str.into_inner())
 }
