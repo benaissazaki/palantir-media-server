@@ -71,6 +71,6 @@ pub async fn get_media_files() -> impl Responder {
 #[get("/media/{media_name}")]
 pub async fn get_media_file(
     media_file_str: web::Path<String>,
-) -> actix_web::Result<actix_files::NamedFile> {
-    Ok(actix_files::NamedFile::open(media_file_str.into_inner())?)
+) -> impl Responder {
+    actix_files::NamedFile::open(media_file_str.into_inner())
 }
