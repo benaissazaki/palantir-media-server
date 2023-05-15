@@ -72,5 +72,6 @@ pub async fn get_media_files() -> impl Responder {
 pub async fn get_media_file(
     media_file_str: web::Path<String>,
 ) -> impl Responder {
+    // TODO: Check that the requested media file is in the media_directories setting
     actix_files::NamedFile::open(media_file_str.into_inner())
 }
