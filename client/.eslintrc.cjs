@@ -20,7 +20,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended"
   ],
-  ignorePatterns: [".eslintrc.cjs"],
+  ignorePatterns: [".eslintrc.cjs", "vite.config.ts"],
   rules: {
     "react/react-in-jsx-scope": "off"
   }
