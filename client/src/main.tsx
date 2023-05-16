@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import { HomePage } from './pages/HomePage';
 import { AppLayout } from './layouts/AppLayout';
+import MediaPage from './pages/MediaPage';
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <HomePage />,
+      },
+      {
+        path: '/media/:mediaFile',
+        element: <MediaPage />,
       },
     ],
   },

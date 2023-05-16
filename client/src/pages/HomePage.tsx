@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 type MediaFilesResponse = {
   length: number,
@@ -27,7 +28,7 @@ export const HomePage = () => {
       <h1>Home</h1>
       <ul>
         {mediaFiles.map(file => (
-          <li key={file}>{file}</li>
+          <li key={file}><Link to={`/media/${encodeURIComponent(file)}`}>{file}</Link></li>
         ))}
       </ul>
     </>
