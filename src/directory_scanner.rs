@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::PathBuf;
 
-use crate::settings;
+use crate::app_settings;
 
 const MEDIA_FILES_EXTENSIONS: &'static [&'static str] = &["mp3", "mp4", "avi", "wav", "mkv"];
 
@@ -32,7 +32,7 @@ pub fn is_file_in_media_directories(file: PathBuf) -> bool {
     }
     
     let media_directories: Vec<PathBuf> =
-        match settings::get_setting("media_directories".to_string()) {
+        match app_settings::get_setting("media_directories".to_string()) {
             Some(p) => p
                 .as_array()
                 .unwrap()
