@@ -29,5 +29,5 @@ async fn set_setting(
 }
 
 pub fn init_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(get_setting);
+    cfg.service(get_setting).service(set_setting);
 }

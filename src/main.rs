@@ -3,8 +3,7 @@ use actix_web::{web, App, HttpServer};
 
 mod app_settings;
 mod media_scanner;
-mod directory_scanner;
-mod routes;
+mod media_server;
 
 fn get_host_and_port() -> (String, u16) {
     let mut args = std::env::args().skip(1);
@@ -27,12 +26,11 @@ async fn main() -> std::io::Result<()> {
     let server = HttpServer::new(|| {
         App::new()
             .wrap(Cors::default().allow_any_origin().send_wildcard())
-            .service(routes::hello)
             .service(
                 web::scope("/api")
                     .configure(app_settings::init_routes)
                     .configure(media_scanner::init_routes)
-                    .service(routes::get_media_file),
+                    .configure(media_server::init_routes),
             )
     })
     .bind((host.clone(), port))?
