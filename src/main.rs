@@ -2,6 +2,7 @@ use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 
 mod app_settings;
+mod media_scanner;
 mod directory_scanner;
 mod routes;
 
@@ -30,7 +31,7 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::scope("/api")
                     .configure(app_settings::init_routes)
-                    .service(routes::get_media_files)
+                    .configure(media_scanner::init_routes)
                     .service(routes::get_media_file),
             )
     })
