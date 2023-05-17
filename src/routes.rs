@@ -72,5 +72,11 @@ pub async fn get_media_files() -> impl Responder {
 pub async fn get_media_file(
     media_file_str: web::Path<String>,
 ) -> impl Responder {
-    actix_files::NamedFile::open(media_file_str.into_inner())
+    let media_file = PathBuf::from(media_file_str.into_inner());
+
+    match directory_scanner::is_file_in_media_directories(media_file.clone()) {
+        true => actix_files::NamedFile::open(media_file),
+        false => actix_files::NamedFile::open(""),
+    }
+
 }
