@@ -5,20 +5,11 @@ use crate::{app_settings, media_scanner::utils};
 
 #[get("/media")]
 async fn get_media_files() -> impl Responder {
-    let media_directories: Vec<PathBuf> =
-        match app_settings::get_setting("media_directories".to_string()) {
-            Some(p) => p
-                .as_array()
-                .unwrap()
-                .into_iter()
-                .map(|v| PathBuf::from(v.as_str().unwrap()))
-                .collect(),
-            None => return HttpResponse::NoContent().finish(),
-        };
+    let media_directories = app_settings::Settings::load().media_directories;
 
     let media_files: Vec<PathBuf> = media_directories
         .into_iter()
-        .flat_map(utils::scan_for_media_files)
+        .flat_map(|dir| utils::scan_for_media_files(PathBuf::from(dir)))
         .collect();
 
     let response = serde_json::json!({
