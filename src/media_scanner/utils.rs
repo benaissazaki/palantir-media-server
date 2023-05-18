@@ -6,7 +6,12 @@ const MEDIA_FILES_EXTENSIONS: &'static [&'static str] = &["mp3", "mp4", "avi", "
 pub fn scan_for_media_files(dir_path: PathBuf) -> Vec<PathBuf> {
     let mut media_files = Vec::new();
 
-    for entry in fs::read_dir(dir_path).unwrap() {
+    let read_dir = match fs::read_dir(dir_path) {
+        Ok(r) => r,
+        Err(_) => return vec![],
+    };
+
+    for entry in read_dir {
         let entry = entry.unwrap();
         let path = entry.path();
         if path.is_dir() {
