@@ -12,23 +12,23 @@ pub struct Settings {
 }
 
 impl Settings {
-    pub fn load() -> Self {
+    pub fn load() -> Result<Self,  std::io::Error> {
         // Open the settings file
         let mut file = match std::fs::File::open(SETTINGS_FILE_NAME) {
             Ok(f) => f,
-            Err(_) => return Settings::default(),
+            Err(e) => return Err(e),
         };
 
         // Read the file contents into a string
         let mut contents = String::new();
-        if let Err(_) = file.read_to_string(&mut contents) {
-            return Settings::default();
+        if let Err(e) = file.read_to_string(&mut contents) {
+            return Err(e);
         }
 
         // Parse the JSON string into a Settings
         match serde_json::from_str(&contents) {
-            Ok(v) => return v,
-            Err(_) => return Settings::default(),
+            Ok(v) => return Ok(v),
+            Err(e) => return Err(e.into()),
         };
     }
 

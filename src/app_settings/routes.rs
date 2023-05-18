@@ -1,9 +1,9 @@
-use crate::app_settings::utils;
+use crate::app_settings::utils::{Settings};
 use actix_web::{get, post, web, HttpResponse, Responder};
 
 #[get("/setting")]
 async fn get_settings() -> impl Responder {
-    let settings = utils::Settings::load();
+    let settings = Settings::load().unwrap_or_default();
 
     HttpResponse::Ok()
         .content_type("application/json")
@@ -17,7 +17,7 @@ struct SetSettingRequest {
 
 #[post("/setting")]
 async fn set_settings(
-    settings_value: web::Json<utils::Settings>,
+    settings_value: web::Json<Settings>,
 ) -> impl Responder {
     match settings_value.into_inner().save() {
         Ok(_) => return HttpResponse::Created().finish(),
