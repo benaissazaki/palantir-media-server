@@ -8,16 +8,7 @@ pub fn is_file_in_media_directories(file: PathBuf) -> bool {
         return false;
     }
     
-    let media_directories: Vec<PathBuf> =
-        match app_settings::get_setting("media_directories".to_string()) {
-            Some(p) => p
-                .as_array()
-                .unwrap()
-                .into_iter()
-                .map(|v| PathBuf::from(v.as_str().unwrap()))
-                .collect(),
-            None => return false,
-        };
+    let media_directories = app_settings::Settings::load().unwrap_or_default().media_directories;
 
     media_directories
         .into_iter()
