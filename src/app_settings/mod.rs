@@ -1,6 +1,6 @@
 mod routes;
-mod utils;
+mod model;
 
 pub use routes::init_routes;
 
-pub use utils::Settings;
+pub use model::AppSettings;

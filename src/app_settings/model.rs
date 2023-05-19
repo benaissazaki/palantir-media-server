@@ -7,11 +7,11 @@ use std::{
 const SETTINGS_FILE_NAME: &str = "app_settings.json";
 
 #[derive(serde::Deserialize, serde::Serialize, Default)]
-pub struct Settings {
+pub struct AppSettings {
     pub media_directories: Vec<String>,
 }
 
-impl Settings {
+impl AppSettings {
     pub fn load() -> Result<Self,  std::io::Error> {
         // Open the settings file
         let mut file = match std::fs::File::open(SETTINGS_FILE_NAME) {
@@ -48,7 +48,7 @@ impl Settings {
     }
 }
 
-impl ToString for Settings {
+impl ToString for AppSettings {
     fn to_string(&self) -> String {
         serde_json::to_string(self).unwrap()
     }

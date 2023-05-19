@@ -1,11 +1,11 @@
 use actix_web::{get, web, HttpResponse, Responder};
 use std::path::PathBuf;
 
-use crate::{app_settings::Settings, media_scanner::utils};
+use crate::{app_settings::AppSettings, media_scanner::utils};
 
 #[get("/media")]
 async fn get_media_files() -> impl Responder {
-    let media_directories = Settings::load()
+    let media_directories = AppSettings::load()
         .unwrap_or_default()
         .media_directories;
 
