@@ -12,7 +12,10 @@ pub fn scan_for_media_files(dir_path: PathBuf) -> Vec<PathBuf> {
     };
 
     for entry in read_dir {
-        let entry = entry.unwrap();
+        let entry = match entry {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
         let path = entry.path();
         if path.is_dir() {
             media_files.extend(scan_for_media_files(path));
