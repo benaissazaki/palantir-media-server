@@ -50,6 +50,6 @@ impl AppSettings {
 
 impl ToString for AppSettings {
     fn to_string(&self) -> String {
-        serde_json::to_string(self).unwrap()
+        serde_json::to_string(self).unwrap_or_default()
     }
 }
