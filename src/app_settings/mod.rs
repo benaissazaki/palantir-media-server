@@ -1,5 +1,6 @@
 mod routes;
 mod model;
+mod tests;
 
 pub use routes::init_routes;
 

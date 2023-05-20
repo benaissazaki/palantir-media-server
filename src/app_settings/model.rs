@@ -4,6 +4,10 @@ use std::{
     io::{Read, Seek, SeekFrom, Write},
 };
 
+#[cfg(test)]
+const SETTINGS_FILE_NAME: &str = "app_settings_test.json";
+
+#[cfg(not(test))]
 const SETTINGS_FILE_NAME: &str = "app_settings.json";
 
 #[derive(serde::Deserialize, serde::Serialize, Default)]
