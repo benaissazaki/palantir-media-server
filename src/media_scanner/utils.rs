@@ -1,9 +1,16 @@
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 
-const MEDIA_FILES_EXTENSIONS: &'static [&'static str] = &["mp3", "mp4", "avi", "wav", "mkv"];
+pub const MEDIA_FILES_EXTENSIONS: &'static [&'static str] = &["mp3", "mp4", "avi", "wav", "mkv"];
 
-pub fn scan_for_media_files(dir_path: PathBuf) -> Vec<PathBuf> {
+#[derive(Serialize, Deserialize)]
+pub struct MediaFilesResponse {
+    pub length: usize,
+    pub items: Vec<String>,
+}
+
+pub fn scan_for_media_files(dir_path: PathBuf) -> Vec<String> {
     let mut media_files = Vec::new();
 
     let read_dir = match fs::read_dir(dir_path) {
@@ -23,7 +30,7 @@ pub fn scan_for_media_files(dir_path: PathBuf) -> Vec<PathBuf> {
             if let Some(ext) = path.extension() {
                 if let Some(ext_str) = ext.to_str() {
                     if MEDIA_FILES_EXTENSIONS.contains(&ext_str) {
-                        media_files.push(path);
+                        media_files.push(path.canonicalize().unwrap_or(path).to_string_lossy().into_owned());
                     }
                 }
             }
