@@ -1,14 +1,16 @@
+use crate::app_settings;
 use std::fs;
 use std::path::PathBuf;
 
-use crate::app_settings;
-
+/// Verifies that the file is in the `media_directories` app setting
 pub fn is_file_in_media_directories(file: PathBuf) -> bool {
     if is_attempting_directory_traversal(file.clone()) {
         return false;
     }
-    
-    let media_directories = app_settings::AppSettings::load().unwrap_or_default().media_directories;
+
+    let media_directories = app_settings::AppSettings::load()
+        .unwrap_or_default()
+        .media_directories;
 
     media_directories
         .into_iter()

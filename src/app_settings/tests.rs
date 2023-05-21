@@ -34,14 +34,14 @@ mod tests {
     }
 
     #[actix_web::test]
-    async fn get_succeeds() {
+    async fn get_returns_correct_data() {
         let mut app = test::init_service(App::new().service(get_settings)).await;
 
         let new_settings = AppSettings {
-            media_directories: ["test/".to_string(), "test2".to_string()].to_vec(),
+            media_directories: vec!["test/".to_string(), "test2".to_string()],
         };
-
         new_settings.save().unwrap();
+        
         let req = test::TestRequest::get()
             .uri("/setting")
             .to_request();

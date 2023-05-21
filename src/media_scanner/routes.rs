@@ -4,6 +4,8 @@ use std::path::PathBuf;
 
 use super::utils::MediaFilesResponse;
 
+/// Returns a list of media files in the directories
+/// specified in the `media_directories` app setting
 #[get("/media")]
 async fn get_media_files() -> impl Responder {
     let media_directories = AppSettings::load().unwrap_or_default().media_directories;

@@ -10,11 +10,6 @@ async fn get_settings() -> impl Responder {
         .body(settings.to_string())
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
-struct SetSettingRequest {
-    value: serde_json::Value,
-}
-
 #[post("/setting")]
 async fn set_settings(
     settings_value: web::Json<AppSettings>,
