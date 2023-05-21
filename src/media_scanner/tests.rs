@@ -6,9 +6,9 @@ mod tests {
     };
     use actix_web::{test, App};
 
+    /// Creates media files and expects the route to return them
     #[actix_web::test]
     async fn get_returns_correct_files() {
-        // Create media files and expect the route to return them
         setup();
 
         let mut app = test::init_service(App::new().service(get_media_files)).await;
@@ -46,6 +46,15 @@ mod tests {
             "testdirs/dir2/test.mkv",
         ];
 
+        pub fn setup() {
+            populate_media_dirs().unwrap();
+            set_media_dirs_setting().unwrap();
+        }
+
+        pub fn teardown() {
+            fs::remove_dir_all("testdirs").unwrap();
+        }
+
         pub async fn get_actual_response(response: ServiceResponse) -> MediaFilesResponse {
             let actual_response_str =
                 String::from_utf8((test::read_body(response).await).to_vec()).unwrap();
@@ -67,25 +76,15 @@ mod tests {
             }
         }
 
-        pub fn setup() {
-            populate_media_dirs().unwrap();
-            set_media_dirs().unwrap();
-        }
-
-        pub fn teardown() {
-            fs::remove_dir_all("testdirs").unwrap();
-        }
-
+        /// Create fake media files for testing purposes
         pub fn populate_media_dirs() -> Result<(), std::io::Error> {
             for file_path in CREATED_FILES {
                 let path = std::path::Path::new(file_path);
 
-                // Create the ancestor directories if they don't exist
                 if let Some(parent) = path.parent() {
                     fs::create_dir_all(parent)?;
                 }
 
-                // Create the file if it doesn't exist
                 if !path.exists() {
                     File::create(path)?;
                 }
@@ -93,7 +92,7 @@ mod tests {
             Ok(())
         }
 
-        pub fn set_media_dirs() -> Result<(), Box<dyn std::error::Error>> {
+        pub fn set_media_dirs_setting() -> Result<(), Box<dyn std::error::Error>> {
             AppSettings {
                 media_directories: vec!["testdirs/dir1".to_string(), "testdirs/dir2".to_string()],
             }
@@ -101,8 +100,8 @@ mod tests {
             Ok(())
         }
 
+        /// Returns only files whose extensions are in `MEDIA_FILES_EXTENSION`
         pub fn filter_media_files<'a>(file_paths: &'a [&'a str]) -> Vec<&'a str> {
-            // Returns only files whose extensions are in MEDIA_FILES_EXTENSION
             file_paths
                 .iter()
                 .filter(|&&file_path| {
@@ -119,8 +118,8 @@ mod tests {
                 .collect()
         }
 
-        pub fn normalize_path(f: &str) -> String {
-            // Canonicalize paths to avoid OS specific differences i.e: / or \
+        /// Canonicalize paths to avoid OS specific differences i.e: / or \
+        pub fn normalize_path(f: &str) -> String {    
             let path = PathBuf::from(f);
             path.canonicalize().unwrap().to_string_lossy().into_owned()
         }

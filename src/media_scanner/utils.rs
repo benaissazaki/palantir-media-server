@@ -20,6 +20,7 @@ impl PartialEq for MediaFilesResponse {
     }
 }
 
+/// Returns a vector listing the media files in `dir_path`
 pub fn scan_for_media_files(dir_path: PathBuf) -> Vec<String> {
     let mut media_files = Vec::new();
 

@@ -16,27 +16,37 @@ pub struct AppSettings {
 }
 
 impl AppSettings {
-    pub fn load() -> Result<Self,  std::io::Error> {
-        // Open the settings file
+    /// Read the settings from `SETTINGS_FILE_NAME` into an `AppSettings` struct
+    /// # Errors
+    /// This function returns an error if:
+    /// - The file does not exist
+    /// - The file's content could not be read into a string
+    /// - The file's content could not be deserialized into an `AppSettings`
+    pub fn load() -> Result<Self, std::io::Error> {
         let mut file = match std::fs::File::open(SETTINGS_FILE_NAME) {
             Ok(f) => f,
             Err(e) => return Err(e),
         };
 
-        // Read the file contents into a string
         let mut contents = String::new();
         if let Err(e) = file.read_to_string(&mut contents) {
             return Err(e);
         }
 
-        // Parse the JSON string into a Settings
         match serde_json::from_str(&contents) {
             Ok(v) => return Ok(v),
             Err(e) => return Err(e.into()),
         };
     }
 
+    /// Serialize the settings into JSON format and write them into `SETTINGS_FILE_NAME`
+    /// # Errors
+    /// This function returns an error if:
+    /// - The file could not be opened
+    /// - The AppSettings object could not be serialized into a JSON string
+    /// - The JSON string could not be written into the `SETTINGS_FILE_NAME`
     pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
+        // The file is created if it does not exist
         let mut file = OpenOptions::new()
             .write(true)
             .create(true)
