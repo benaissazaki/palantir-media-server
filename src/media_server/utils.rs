@@ -1,4 +1,4 @@
-use crate::app_settings;
+use crate::app_settings::AppSettings;
 use std::fs;
 use std::path::PathBuf;
 
@@ -8,9 +8,7 @@ pub fn is_file_in_media_directories(file: PathBuf) -> bool {
         return false;
     }
 
-    let media_directories = app_settings::AppSettings::load()
-        .unwrap_or_default()
-        .media_directories;
+    let media_directories = &AppSettings::instance().lock().unwrap().media_directories;
 
     media_directories
         .into_iter()

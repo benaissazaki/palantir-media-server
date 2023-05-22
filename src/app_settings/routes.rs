@@ -3,7 +3,7 @@ use actix_web::{get, post, web, HttpResponse, Responder};
 
 #[get("/setting")]
 async fn get_settings() -> impl Responder {
-    let settings = AppSettings::load().unwrap_or_default();
+    let settings = AppSettings::instance().lock().unwrap();
 
     HttpResponse::Ok()
         .content_type("application/json")

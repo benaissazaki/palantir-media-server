@@ -8,7 +8,7 @@ use super::utils::MediaFilesResponse;
 /// specified in the `media_directories` app setting
 #[get("/media")]
 async fn get_media_files() -> impl Responder {
-    let media_directories = AppSettings::load().unwrap_or_default().media_directories;
+    let media_directories = &AppSettings::instance().lock().unwrap().media_directories;
 
     let media_files: Vec<String> = media_directories
         .into_iter()
