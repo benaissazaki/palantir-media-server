@@ -3,7 +3,10 @@ mod tests {
     use actix_web::{test, App};
     use serde_json::json;
 
-    use crate::app_settings::{routes::{set_settings, get_settings}, AppSettings};
+    use crate::app_settings::{
+        routes::{get_settings, set_settings},
+        AppSettings,
+    };
 
     #[actix_web::test]
     async fn post_succeeds_with_valid_data() {
@@ -37,14 +40,14 @@ mod tests {
     async fn get_returns_correct_data() {
         let mut app = test::init_service(App::new().service(get_settings)).await;
 
-        let new_settings = AppSettings {
-            media_directories: vec!["test/".to_string(), "test2".to_string()],
-        };
+        let mut new_settings = AppSettings::instance().lock().unwrap();
+        new_settings.media_directories = vec!["test/".to_string(), "test2".to_string()];
         new_settings.save().unwrap();
+
+        let new_settings_str = new_settings.to_string();
+        drop(new_settings);
         
-        let req = test::TestRequest::get()
-            .uri("/setting")
-            .to_request();
+        let req = test::TestRequest::get().uri("/setting").to_request();
 
         let res = test::call_service(&mut app, req).await;
 
@@ -52,7 +55,7 @@ mod tests {
 
         let body = test::read_body(res).await;
 
-        assert_eq!(body, new_settings.to_string());
+        
+        assert_eq!(body, new_settings_str);
     }
 }
- 
