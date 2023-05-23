@@ -120,7 +120,7 @@ mod tests {
         /// Canonicalize paths to avoid OS specific differences i.e: / or \
         pub fn normalize_path(f: &str) -> String {    
             let path = PathBuf::from(f);
-            path.canonicalize().unwrap().to_string_lossy().into_owned()
+            path.canonicalize().unwrap().to_string_lossy().into_owned().replace("\\\\?\\", "")
         }
     }
 }

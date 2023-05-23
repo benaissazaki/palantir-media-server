@@ -45,7 +45,8 @@ pub fn scan_for_media_files(dir_path: PathBuf) -> Vec<String> {
                             path.canonicalize()
                                 .unwrap_or(path)
                                 .to_string_lossy()
-                                .into_owned(),
+                                .into_owned()
+                                .replace("\\\\?\\", ""),
                         );
                     }
                 }
