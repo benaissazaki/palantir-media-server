@@ -22,10 +22,8 @@ mod tests {
 
         let actual_response = get_actual_response(res).await;
 
-        let is_success = expected_response == actual_response;
-
         teardown();
-        assert!(is_success);
+        assert_eq!(expected_response, actual_response);
     }
 
     mod helpers {
@@ -93,10 +91,11 @@ mod tests {
         }
 
         pub fn set_media_dirs_setting() -> Result<(), Box<dyn std::error::Error>> {
-            AppSettings {
-                media_directories: vec!["testdirs/dir1".to_string(), "testdirs/dir2".to_string()],
-            }
-            .save()?;
+            let mut settings = AppSettings::instance().lock().unwrap();
+
+            settings.media_directories =  vec!["testdirs/dir1".to_string(), "testdirs/dir2".to_string()];
+            settings.save()?;
+            drop(settings);
             Ok(())
         }
 

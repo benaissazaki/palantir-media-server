@@ -1,7 +1,9 @@
+use lazy_static;
 use serde_json;
 use std::{
     fs::OpenOptions,
     io::{Read, Seek, SeekFrom, Write},
+    sync::Mutex,
 };
 
 #[cfg(test)]
@@ -9,6 +11,10 @@ const SETTINGS_FILE_NAME: &str = "app_settings_test.json";
 
 #[cfg(not(test))]
 const SETTINGS_FILE_NAME: &str = "app_settings.json";
+
+lazy_static::lazy_static! {
+    static ref APP_SETTINGS: Mutex<AppSettings> = Mutex::new(AppSettings::load().unwrap_or_default());
+}
 
 #[derive(serde::Deserialize, serde::Serialize, Default)]
 pub struct AppSettings {
@@ -22,7 +28,7 @@ impl AppSettings {
     /// - The file does not exist
     /// - The file's content could not be read into a string
     /// - The file's content could not be deserialized into an `AppSettings`
-    pub fn load() -> Result<Self, std::io::Error> {
+    fn load() -> Result<Self, std::io::Error> {
         let mut file = match std::fs::File::open(SETTINGS_FILE_NAME) {
             Ok(f) => f,
             Err(e) => return Err(e),
@@ -59,6 +65,11 @@ impl AppSettings {
         file.write_all(json_string.as_bytes())?;
 
         Ok(())
+    }
+
+    /// Get the singleton instance of the AppSettings
+    pub fn instance() -> &'static Mutex<AppSettings> {
+        &APP_SETTINGS
     }
 }
 

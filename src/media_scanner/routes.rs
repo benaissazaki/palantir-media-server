@@ -8,7 +8,9 @@ use super::utils::MediaFilesResponse;
 /// specified in the `media_directories` app setting
 #[get("/media")]
 async fn get_media_files() -> impl Responder {
-    let media_directories = AppSettings::load().unwrap_or_default().media_directories;
+    let settings = AppSettings::instance().lock().unwrap();
+
+    let media_directories = settings.media_directories.clone();
 
     let media_files: Vec<String> = media_directories
         .into_iter()
@@ -20,6 +22,7 @@ async fn get_media_files() -> impl Responder {
         items: media_files,
     };
 
+    drop(settings);
     return HttpResponse::Ok()
         .content_type("application/json")
         .body(serde_json::to_string(&response).unwrap_or_default());

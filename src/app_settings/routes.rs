@@ -3,20 +3,31 @@ use actix_web::{get, post, web, HttpResponse, Responder};
 
 #[get("/setting")]
 async fn get_settings() -> impl Responder {
-    let settings = AppSettings::load().unwrap_or_default();
+    let settings = AppSettings::instance().lock().unwrap();
 
+    let settings_str = settings.to_string();
+
+    drop(settings);
     HttpResponse::Ok()
         .content_type("application/json")
-        .body(settings.to_string())
+        .body(settings_str)
 }
 
 #[post("/setting")]
 async fn set_settings(
     settings_value: web::Json<AppSettings>,
 ) -> impl Responder {
-    match settings_value.into_inner().save() {
-        Ok(_) => return HttpResponse::Created().finish(),
-        Err(_) => return HttpResponse::UnprocessableEntity().finish(),
+    let mut settings = AppSettings::instance().lock().unwrap();
+
+    settings.media_directories = settings_value.media_directories.clone();
+    match settings.save() {
+        Ok(_) => {
+            drop(settings);
+            return HttpResponse::Created().finish()},
+        Err(_) => {
+            drop(settings);
+            return HttpResponse::UnprocessableEntity().finish()
+        },
     };
 }
 
