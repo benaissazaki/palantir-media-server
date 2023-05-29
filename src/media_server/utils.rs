@@ -1,5 +1,4 @@
 use crate::app_settings::AppSettings;
-use std::fs;
 use std::path::PathBuf;
 
 /// Verifies that the file is in the `media_directories` app setting
@@ -16,10 +15,12 @@ pub fn is_file_in_media_directories(file: PathBuf) -> bool {
 }
 
 fn is_attempting_directory_traversal(path: PathBuf) -> bool {
-    let canonical_path = match fs::canonicalize(&path) {
-        Ok(path) => path,
-        Err(_) => return true, // Unable to canonicalize, assume directory traversal
-    };
-
-    path != canonical_path
+    // Check for any occurrences of ".." in the file path
+    path.components().any(|component| {
+        if let std::path::Component::Normal(path) = component {
+            path == ".."
+        } else {
+            false
+        }
+    })
 }
