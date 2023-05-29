@@ -76,19 +76,22 @@ const TreeNode = ({ tree }: TreeProps) => {
   if (tree.children.length !== 0) {
     return (
       <ul>
-        <li>{tree.name}</li>
-        {tree.children.map((child, index) => (
-          <TreeNode key={index} tree={child} />
-        ))}
+        <li>
+          <details>
+            <summary>{tree.name}</summary>
+            {tree.children.map((child, index) => (
+              <TreeNode key={index} tree={child} />
+            ))}
+          </details>
+        </li>
       </ul>
     );
   }
   return (
     <ul>
-      <li><Link to={`/media/${encodeURIComponent(tree.url)}`}>{tree.name}</Link></li>
-      {tree.children.map((child, index) => (
-        <TreeNode key={index} tree={child} />
-      ))}
+      <li>
+        <Link to={`/media/${encodeURIComponent(tree.url)}`}>{tree.name}</Link>
+      </li>
     </ul>
   );
 };
