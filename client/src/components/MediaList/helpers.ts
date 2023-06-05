@@ -1,12 +1,4 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-
-type MediaFilesResponse = {
-  length: number,
-  items: string[]
-};
-
-type FileNode = {
+export type FileNode = {
   name: string,
   url: string,
   children: FileNode[]
@@ -44,7 +36,7 @@ function buildTreeFromPaths(tree: FileNode, pathSegments: string[], isWindowsPat
  * @param paths An array of file paths.
  * @returns The root FileNode representing the hierarchical tree structure.
  */
-function constructFileTree(paths: string[]): FileNode {
+export function constructFileTree(paths: string[]): FileNode {
   const tree: FileNode = {
     name: '$root',
     url: '',
@@ -56,66 +48,3 @@ function constructFileTree(paths: string[]): FileNode {
   return tree;
 }
 
-interface TreeProps {
-  tree: FileNode;
-}
-
-const TreeNode = ({ tree }: TreeProps) => {
-  // Don't display root node
-  if (tree.name === '$root') {
-    return (
-      <>
-        {tree.children.map((child, index) => (
-          <TreeNode key={index} tree={child} />
-        ))}
-      </>
-    );
-  }
-
-  // Don't display links for directories
-  if (tree.children.length !== 0) {
-    return (
-      <ul>
-        <li>
-          <details>
-            <summary>{tree.name}</summary>
-            {tree.children.map((child, index) => (
-              <TreeNode key={index} tree={child} />
-            ))}
-          </details>
-        </li>
-      </ul>
-    );
-  }
-  return (
-    <ul>
-      <li>
-        <Link to={`/media/${encodeURIComponent(tree.url)}`}>{tree.name}</Link>
-      </li>
-    </ul>
-  );
-};
-
-const MediaList = () => {
-  const [mediaFilesTree, setMediaFilesTree] = useState<FileNode>({ name: '$root', url: '', children: [] });
-
-  const fetchMediaFilesList = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/media`);
-      const data: MediaFilesResponse = await response.json();
-      setMediaFilesTree(constructFileTree(data.items));
-    } catch (error) {
-      console.error('Error fetching media directories:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchMediaFilesList();
-  }, []);
-
-  return (
-    <TreeNode tree={mediaFilesTree} />
-  );
-};
-
-export default MediaList;
