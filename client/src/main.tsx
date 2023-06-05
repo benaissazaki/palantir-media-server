@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
-import { HomePage } from './pages/HomePage';
-import { AppLayout } from './layouts/AppLayout';
+import HomePage from './pages/HomePage';
+import AppLayout from './layouts/AppLayout';
 import MediaPage from './pages/MediaPage';
 
 const router = createBrowserRouter([
