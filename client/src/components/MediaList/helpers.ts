@@ -51,17 +51,17 @@ export function constructFileTree(paths: string[]): FileNode {
 
 export function getNodeIcon(node: FileNode): string {
   if (node.children.length != 0) {
-    return '/public/icons/directory.svg';
+    return '/icons/directory.svg';
   }
 
   const fileExtension = node.name.split('.').pop();
 
   if (['mp4', 'mkv', 'avi'].includes(fileExtension!)) {
-    return '/public/icons/video.svg';
+    return '/icons/video.svg';
   }
 
   if (['mp3', 'wav'].includes(fileExtension!)) {
-    return '/public/icons/video.svg';
+    return '/icons/video.svg';
   }
 
   throw new Error('No matching icon');
