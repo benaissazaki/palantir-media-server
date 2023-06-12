@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useParams } from 'react-router-dom';
+import VideoPlayer from '../components/VideoPlayer';
 
 type MediaPageParams = {
   mediaFile: string,
@@ -11,7 +12,7 @@ const MediaPage = () => {
   const fileExtension = params.mediaFile?.split('.').pop();
   if (['mp4', 'mkv', 'avi'].includes(fileExtension!)) {
     return (
-      <video src={`${import.meta.env.VITE_API_BASE_URL}/api/media/${encodeURIComponent(params.mediaFile!)}`} controls/>
+      <VideoPlayer mediaFile={params.mediaFile!} />
     );
   }
 
