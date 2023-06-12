@@ -1,0 +1,31 @@
+.list {
+  list-style: none;
+  background-color: aliceblue;
+  padding: 15px;
+}
+
+.list summary {
+  list-style: none;
+  padding-bottom: 10px;
+}
+
+.list details > summary:hover {
+  border-bottom: solid 1px rgb(213, 234, 252);
+  padding-bottom: 9px;
+}
+
+.list details[open] > summary {
+  border-bottom: solid 1px rgb(213, 234, 252);
+  padding-bottom: 10px;
+}
+
+.file {
+  display: flex;
+  align-items:center;
+  cursor: pointer;
+}
+
+.file img {
+  max-width: 50px;
+  margin-right: 15px;
+}

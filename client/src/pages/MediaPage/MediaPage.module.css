@@ -1,0 +1,9 @@
+#previous {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+#previous img {
+  width: 50px;
+}

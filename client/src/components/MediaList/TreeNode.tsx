@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { FileNode } from './helpers';
+import { FileNode, getNodeIcon } from './helpers';
+import style from './TreeNode.module.css';
 
 interface TreeProps {
   tree: FileNode;
@@ -20,10 +21,15 @@ const TreeNode = ({ tree }: TreeProps) => {
   // Don't display links for directories
   if (tree.children.length !== 0) {
     return (
-      <ul>
+      <ul className={style.list}>
         <li>
           <details>
-            <summary>{tree.name}</summary>
+            <summary>
+              <div className={style.file}>
+                <img src={getNodeIcon(tree)} />
+                {tree.name}
+              </div>
+            </summary>
             {tree.children.map((child, index) => (
               <TreeNode key={index} tree={child} />
             ))}
@@ -33,9 +39,12 @@ const TreeNode = ({ tree }: TreeProps) => {
     );
   }
   return (
-    <ul>
+    <ul className={style.list}>
       <li>
-        <Link to={`/media/${encodeURIComponent(tree.url)}`}>{tree.name}</Link>
+        <div className={style.file}>
+          <img src={getNodeIcon(tree)} />
+          <Link to={`/media/${encodeURIComponent(tree.url)}`}>{tree.name}</Link>
+        </div>
       </li>
     </ul>
   );

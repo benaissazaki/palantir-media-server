@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 export type FileNode = {
   name: string,
   url: string,
@@ -48,3 +49,21 @@ export function constructFileTree(paths: string[]): FileNode {
   return tree;
 }
 
+export function getNodeIcon(node: FileNode): string {
+  if (node.children.length != 0) {
+    return '/icons/directory.svg';
+  }
+
+  const fileExtension = node.name.split('.').pop();
+
+  if (['mp4', 'mkv', 'avi'].includes(fileExtension!)) {
+    return '/icons/video.svg';
+  }
+
+  if (['mp3', 'wav'].includes(fileExtension!)) {
+    return '/icons/video.svg';
+  }
+
+  throw new Error('No matching icon');
+  
+}
