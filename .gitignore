@@ -2,3 +2,4 @@
 app_settings.json
 app_settings_test.json
 testdirs/
+build/
