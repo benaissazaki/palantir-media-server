@@ -11,7 +11,5 @@ pub async fn media_route() -> impl Responder {
   #[cfg(not(debug_assertions))]
   let app_path = PathBuf::from("./index.html");
 
-  println!("{}", app_path.to_str().unwrap());
-
   NamedFile::open(app_path)
 }
