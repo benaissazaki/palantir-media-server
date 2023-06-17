@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import TreeNode from './TreeNode';
 import { FileNode, constructFileTree } from './helpers';
+import Loader from '../Loader';
+import EmptyList from './EmptyList';
 
 type MediaFilesResponse = {
   length: number,
@@ -9,6 +11,7 @@ type MediaFilesResponse = {
 
 const MediaList = () => {
   const [mediaFilesTree, setMediaFilesTree] = useState<FileNode>({ name: '$root', url: '', children: [] });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchMediaFilesList = async () => {
     try {
@@ -17,16 +20,29 @@ const MediaList = () => {
       setMediaFilesTree(constructFileTree(data.items));
     } catch (error) {
       console.error('Error fetching media directories:', error);
+    } finally {
+      setIsLoading(false);
     }
+
   };
 
   useEffect(() => {
     fetchMediaFilesList();
   }, []);
 
-  return (
-    <TreeNode tree={mediaFilesTree} />
-  );
+  if (isLoading) {
+    return (
+      <Loader />
+    );
+  } else if (mediaFilesTree.children.length === 0) {
+    return (
+      <EmptyList />
+    );
+  } else {
+    return (
+      <TreeNode tree={mediaFilesTree} />
+    );
+  }
 };
 
 export default MediaList;
