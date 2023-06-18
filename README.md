@@ -9,7 +9,7 @@ Palantir Media Server is a lightweight and efficient media server that allows yo
 
 ## How to use
 
-1. Download the latest release [here](https://github.com/benaissazaki/palantir-media-server/releases/tag/v0.0.0).
+1. Download the latest release [here](https://github.com/benaissazaki/palantir-media-server/releases/latest).
 2. Specify the directories containing the media files that you want to share in the `app_settings.json` file. E.g: 
 ```
 {
