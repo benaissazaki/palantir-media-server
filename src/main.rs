@@ -1,3 +1,5 @@
+use std::env;
+
 use actix_cors::Cors;
 use actix_files::Files;
 use actix_web::{
@@ -30,6 +32,15 @@ fn get_host_and_port() -> (String, u16) {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    // Set the exe's parent directory to be the working directory
+    if let Ok(exe_path) = env::current_exe() {
+        if let Some(exe_dir) = exe_path.parent() {
+            if let Err(err) = env::set_current_dir(&exe_dir) {
+                eprintln!("Failed to set current directory: {}", err);
+            }
+        }
+    }
+
     let (host, port) = get_host_and_port();
     #[cfg(debug_assertions)]
     let app_path = "./client/dist";
