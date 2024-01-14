@@ -32,7 +32,8 @@ fn get_host_and_port() -> (String, u16) {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // Set the exe's parent directory to be the working directory
+    // Set the exe's parent directory to be the working directory if release
+    #[cfg(not(debug_assertions))]
     if let Ok(exe_path) = env::current_exe() {
         if let Some(exe_dir) = exe_path.parent() {
             if let Err(err) = env::set_current_dir(&exe_dir) {
@@ -42,6 +43,7 @@ async fn main() -> std::io::Result<()> {
     }
 
     let (host, port) = get_host_and_port();
+
     #[cfg(debug_assertions)]
     let app_path = "./client/dist";
 
