@@ -1,4 +1,4 @@
-use crate::app_settings::model::{AppSettings};
+use crate::server::app_settings::model::AppSettings;
 use actix_web::{get, post, web, HttpResponse, Responder};
 
 #[get("/setting")]
