@@ -3,7 +3,7 @@ mod tests {
     use actix_web::{test, App};
     use serde_json::json;
 
-    use crate::app_settings::{
+    use crate::server::app_settings::{
         routes::{get_settings, set_settings},
         AppSettings,
     };
