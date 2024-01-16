@@ -1,18 +1,9 @@
-use actix_web::rt;
-use std::{sync::mpsc, thread};
-
-use crate::server::get_server;
+use iced::{Sandbox, Settings};
+use crate::gui::state::AppState;
 
 mod server;
+mod gui;
 
-fn main() {
-    let (tx, _rx) = mpsc::channel();
-
-    // Launch the server in a separate thread
-    let handle = thread::spawn(move || {
-        let server_future = get_server(tx);
-        rt::System::new().block_on(server_future)
-    });
-
-    let _ = handle.join().unwrap();
+pub fn main() -> iced::Result {
+    AppState::run(Settings::default())
 }

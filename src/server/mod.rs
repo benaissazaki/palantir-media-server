@@ -1,4 +1,4 @@
-use std::sync::mpsc;
+use std::{sync::mpsc, thread};
 
 use actix_cors::Cors;
 use actix_files::Files;
@@ -6,7 +6,7 @@ use actix_web::{
     dev::ServerHandle,
     middleware,
     web::{self},
-    App, HttpServer,
+    App, HttpServer, rt,
 };
 
 use crate::server::react_app::media_route;
@@ -70,4 +70,16 @@ pub async fn get_server(tx: mpsc::Sender<ServerHandle>) -> std::io::Result<()> {
 
     let _ = tx.send(server.handle());
     server.await
+}
+
+pub fn launch_server() -> ServerHandle {
+    let (tx, rx) = mpsc::channel();
+
+    // Launch the server in a separate thread
+    thread::spawn(move || {
+        let server_future = get_server(tx);
+        rt::System::new().block_on(server_future)
+    });
+
+    rx.recv().unwrap()
 }
