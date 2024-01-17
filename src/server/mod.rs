@@ -4,9 +4,9 @@ use actix_cors::Cors;
 use actix_files::Files;
 use actix_web::{
     dev::ServerHandle,
-    middleware,
+    middleware, rt,
     web::{self},
-    App, HttpServer, rt,
+    App, HttpServer,
 };
 
 use crate::server::react_app::media_route;
@@ -31,7 +31,7 @@ fn get_host_and_port() -> (String, u16) {
     (host, port)
 }
 
-pub async fn get_server(tx: mpsc::Sender<ServerHandle>) -> std::io::Result<()> {
+pub async fn get_server(tx: mpsc::Sender<ServerHandle>, host: String, port: u16) -> std::io::Result<()> {
     // Set the exe's parent directory to be the working directory if release
     #[cfg(not(debug_assertions))]
     if let Ok(exe_path) = env::current_exe() {
@@ -41,8 +41,6 @@ pub async fn get_server(tx: mpsc::Sender<ServerHandle>) -> std::io::Result<()> {
             }
         }
     }
-
-    let (host, port) = get_host_and_port();
 
     #[cfg(debug_assertions)]
     let app_path = "./client/dist";
@@ -72,12 +70,12 @@ pub async fn get_server(tx: mpsc::Sender<ServerHandle>) -> std::io::Result<()> {
     server.await
 }
 
-pub fn launch_server() -> ServerHandle {
+pub fn launch_server(host: String, port: u16) -> ServerHandle {
     let (tx, rx) = mpsc::channel();
 
     // Launch the server in a separate thread
     thread::spawn(move || {
-        let server_future = get_server(tx);
+        let server_future = get_server(tx, host, port);
         rt::System::new().block_on(server_future)
     });
 
