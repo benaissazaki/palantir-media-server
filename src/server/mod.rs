@@ -1,3 +1,6 @@
+#[cfg(not(debug_assertions))]
+use std::env;
+
 use std::{sync::mpsc, thread};
 
 use actix_cors::Cors;
