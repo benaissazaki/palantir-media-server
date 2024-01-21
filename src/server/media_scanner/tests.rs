@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::media_scanner::{
+    use crate::server::media_scanner::{
         routes::get_media_files,
         tests::tests::helpers::{get_actual_response, get_expected_response, setup, teardown},
     };
@@ -28,8 +28,8 @@ mod tests {
 
     mod helpers {
         use crate::{
-            app_settings::AppSettings,
-            media_scanner::utils::{MediaFilesResponse, MEDIA_FILES_EXTENSIONS},
+            server::app_settings::AppSettings,
+            server::media_scanner::utils::{MediaFilesResponse, MEDIA_FILES_EXTENSIONS},
         };
         use actix_web::{dev::ServiceResponse, test};
         use std::{

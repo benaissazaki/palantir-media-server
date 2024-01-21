@@ -1,4 +1,4 @@
-use crate::{app_settings::AppSettings, media_scanner::utils};
+use crate::server::{app_settings::AppSettings, media_scanner::utils};
 use actix_web::{get, web, HttpResponse, Responder};
 use std::path::PathBuf;
 

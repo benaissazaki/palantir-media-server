@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use actix_files;
 use actix_web::{get, web, Responder};
 
-use crate::media_server::utils;
+use crate::server::media_server::utils;
 
 #[get("/media/{media_name}")]
 async fn get_media_file(media_file_str: web::Path<String>) -> impl Responder {

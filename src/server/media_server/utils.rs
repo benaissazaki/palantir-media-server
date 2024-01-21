@@ -1,4 +1,4 @@
-use crate::app_settings::AppSettings;
+use crate::server::app_settings::AppSettings;
 use std::path::PathBuf;
 
 /// Verifies that the file is in the `media_directories` app setting
