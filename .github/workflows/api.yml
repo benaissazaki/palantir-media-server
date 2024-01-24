@@ -52,7 +52,7 @@ jobs:
 
     - name: Create Release
       id: create_release
-      run: gh release create -t "v${{ steps.extract_version.outputs.app_version }}" -n "Release v${{ steps.extract_version.outputs.app_version }}"
+      run: gh release create "v${{ steps.extract_version.outputs.app_version }}" -t "v${{ steps.extract_version.outputs.app_version }}" -n "v${{ steps.extract_version.outputs.app_version }}"
 
   package_and_upload_linux:
     needs: create_release
@@ -70,3 +70,11 @@ jobs:
       - name: upload
         run: gh release upload ${{ needs.create_release.outputs.RELEASE_ID }} palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip
 
+  delete_release:
+    if: failure()
+    needs: create_release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete Release
+        run: gh release delete ${{ needs.create_release.outputs.RELEASE_ID }} -y
