@@ -51,7 +51,7 @@ jobs:
 
     - name: Create Release
       id: create_release
-      run: gh release create -t "v${{ steps.extract_version.outputs.app_version }}" -n "Release v${{ steps.extract_version.outputs.app_version }}" -b "Release notes for v${{ steps.extract_version.outputs.app_version }}"
+      run: gh release create -t "v${{ steps.extract_version.outputs.app_version }}" -n "Release v${{ steps.extract_version.outputs.app_version }}"
 
   package_and_upload_linux:
     needs: create_release
