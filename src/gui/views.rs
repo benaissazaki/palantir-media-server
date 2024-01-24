@@ -13,6 +13,11 @@ impl Sandbox for AppState {
     type Message = ServerControlMessage;
 
     fn view(&self) -> Element<Self::Message> {
+        let start_server_error = match self.start_server_error {
+            true => column![text("Error starting the server")],
+            false => column![],
+        };
+
         let state = match self.server_handle {
             None => column![button("Start server")
                 .on_press(ServerControlMessage::StartServerPressed)
@@ -50,7 +55,7 @@ impl Sandbox for AppState {
         ]
         .spacing(20);
 
-        let col = column![state, settings]
+        let col = column![start_server_error, state, settings]
             .width(300)
             .spacing(20)
             .align_items(Alignment::Center);
@@ -68,6 +73,7 @@ impl Sandbox for AppState {
             server_handle: None,
             host: "127.0.0.1".to_string(),
             port: "8080".to_string(),
+            start_server_error: false,
         }
     }
 
@@ -78,13 +84,17 @@ impl Sandbox for AppState {
     fn update(&mut self, message: Self::Message) {
         match message {
             ServerControlMessage::StartServerPressed => {
-                self.server_handle = Some(launch_server(
-                    self.host.clone(),
-                    str::parse(self.port.as_str()).unwrap(),
-                ));
+                match launch_server(self.host.clone(), str::parse(self.port.as_str()).unwrap()) {
+                    Ok(server_handle) => {
+                        self.server_handle = Some(server_handle);
+                        self.start_server_error = false;
+                    },
+                    Err(_) => self.start_server_error = true,
+                };
             }
             ServerControlMessage::StopServerPressed => {
                 rt::System::new().block_on(self.server_handle.as_ref().unwrap().stop(true));
+                self.start_server_error = false;
                 self.server_handle = None;
             }
             ServerControlMessage::HostChanged(host) => {
