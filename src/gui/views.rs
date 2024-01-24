@@ -35,23 +35,22 @@ impl Sandbox for AppState {
         };
 
         let state = container(state).center_x();
+
+        let mut host_input = text_input("Host", self.host.as_str()).padding(10);
+        let mut port_input = text_input("Port", self.port.as_str()).padding(10);
+
+        if !self.server_handle.is_some() {
+            host_input = host_input.on_input(|host| ServerControlMessage::HostChanged(host));
+            port_input = port_input.on_input(|port| ServerControlMessage::PortChanged(port))
+        }
+
         let settings = column![
-            row![
-                text("Host:"),
-                text_input("Host", self.host.as_str())
-                    .on_input(|host| ServerControlMessage::HostChanged(host))
-                    .padding(10)
-            ]
-            .spacing(20)
-            .align_items(Alignment::Center),
-            row![
-                text("Port:"),
-                text_input("Port", self.port.as_str())
-                    .on_input(|port| ServerControlMessage::PortChanged(port))
-                    .padding(10)
-            ]
-            .spacing(20)
-            .align_items(Alignment::Center)
+            row![text("Host:"), host_input]
+                .spacing(20)
+                .align_items(Alignment::Center),
+            row![text("Port:"), port_input]
+                .spacing(20)
+                .align_items(Alignment::Center)
         ]
         .spacing(20);
 
@@ -88,7 +87,7 @@ impl Sandbox for AppState {
                     Ok(server_handle) => {
                         self.server_handle = Some(server_handle);
                         self.start_server_error = false;
-                    },
+                    }
                     Err(_) => self.start_server_error = true,
                 };
             }
