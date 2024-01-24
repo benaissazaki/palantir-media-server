@@ -41,6 +41,7 @@ jobs:
       RELEASE_ID: ${{ steps.create_release.outputs.id }}
 
     steps:
+    - uses: actions/checkout@v3
 
     - name: Extract Version
       id: extract_version
