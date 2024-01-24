@@ -60,12 +60,34 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
       
       - name: build
         run: ./build-linux.sh
 
       - name: package
         run: zip -r palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip build/
+
+      - name: upload
+        run: gh release upload ${{ needs.create_release.outputs.RELEASE_ID }} palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip
+
+  package_and_upload_windows:
+    needs: create_release
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: build
+        run: build-windows.bat
+
+      - name: package
+        run: zip -r palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-win64.zip build/
 
       - name: upload
         run: gh release upload ${{ needs.create_release.outputs.RELEASE_ID }} palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip
