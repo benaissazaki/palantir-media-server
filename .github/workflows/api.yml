@@ -30,4 +30,41 @@ jobs:
     - name: Build
       run: cargo build --verbose
     - name: Run tests
-      run: cargo test --verbose -- --test-threads=1  
+      run: cargo test --verbose -- --test-threads=1
+
+  create_release:
+    needs: [test_linux, test_windows]
+    runs-on: ubuntu-latest
+
+    outputs:
+      RELEASE_VERSION: ${{ steps.extract_version.outputs.app_version }}
+      RELEASE_ID: ${{ steps.create_release.outputs.id }}
+
+    steps:
+
+    - name: Extract Version
+      id: extract_version
+      uses: dante-signal31/rust-app-version@v1.2.0
+      with:
+         cargo_toml_folder: ./
+
+    - name: Create Release
+      id: create_release
+      run: gh release create -t "v${{ steps.extract_version.outputs.app_version }}" -n "Release v${{ steps.extract_version.outputs.app_version }}" -b "Release notes for v${{ steps.extract_version.outputs.app_version }}"
+
+  package_and_upload_linux:
+    needs: create_release
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: build
+        run: ./build-linux.sh
+
+      - name: package
+        run: zip -r palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip build/
+
+      - name: upload
+        run: gh release upload ${{ needs.create_release.outputs.RELEASE_ID }} palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip
+
