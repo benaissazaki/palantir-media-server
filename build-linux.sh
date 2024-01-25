@@ -1,4 +1,5 @@
 cd client
+pnpm install
 pnpm run build --emptyOutDir --outDir ../build
 cd ..
 cargo build --release
