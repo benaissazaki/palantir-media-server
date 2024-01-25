@@ -59,7 +59,7 @@ jobs:
       id: get_release_id
       uses: joutvhu/get-release@v1
       with:
-        tag_name: ${{ steps.extract_version.outputs.app_version }}
+        tag_name: "v${{ steps.extract_version.outputs.app_version }}"
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
@@ -93,10 +93,10 @@ jobs:
           version: 8
       
       - name: build
-        run: ./build-windows.bat
+        run: .\build-windows.bat
 
       - name: package
-        run: zip -r palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-win64.zip build/
+        run: Compress-Archive -Path .\build -DestinationPath .\palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-win64.zip 
 
       - name: upload
         run: gh release upload ${{ needs.create_release.outputs.RELEASE_ID }} palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip
