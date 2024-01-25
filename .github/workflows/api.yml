@@ -39,7 +39,7 @@ jobs:
 
     outputs:
       RELEASE_VERSION: ${{ steps.extract_version.outputs.app_version }}
-      RELEASE_ID: ${{ steps.create_release.outputs.id }}
+      RELEASE_ID: ${{ steps.get_release_id.outputs.id }}
 
     steps:
     - uses: actions/checkout@v3
@@ -53,6 +53,15 @@ jobs:
     - name: Create Release
       id: create_release
       run: gh release create "v${{ steps.extract_version.outputs.app_version }}" -t "v${{ steps.extract_version.outputs.app_version }}" -n "v${{ steps.extract_version.outputs.app_version }}"
+
+    
+    - name: Get release ID
+      id: get_release_id
+      uses: joutvhu/get-release@v1
+      with:
+        tag_name: ${{ steps.extract_version.outputs.app_version }}
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
 
   package_and_upload_linux:
     needs: create_release
@@ -84,7 +93,7 @@ jobs:
           version: 8
       
       - name: build
-        run: build-windows.bat
+        run: ./build-windows.bat
 
       - name: package
         run: zip -r palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-win64.zip build/
@@ -94,7 +103,7 @@ jobs:
 
   delete_release:
     if: failure()
-    needs: create_release
+    needs: [create_release, package_and_upload_linux, package_and_upload_windows]
     runs-on: ubuntu-latest
 
     steps:
