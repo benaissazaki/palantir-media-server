@@ -98,7 +98,7 @@ jobs:
         run: Compress-Archive -Path .\build -DestinationPath .\palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-win64.zip 
 
       - name: upload
-        run: gh release upload ${{ needs.create_release.outputs.RELEASE_ID }} palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip
+        run: gh release upload v${{ needs.create_release.outputs.RELEASE_VERSION }} palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-win64.zip
 
   delete_release:
     if: failure()
