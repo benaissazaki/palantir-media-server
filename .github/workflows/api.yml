@@ -91,9 +91,8 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      
       - name: build
-        run: .\build-windows.bat
+        run: .\build-windows.ps1
 
       - name: package
         run: Compress-Archive -Path .\build -DestinationPath .\palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-win64.zip 
