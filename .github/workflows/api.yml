@@ -80,7 +80,7 @@ jobs:
         run: zip -r palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip build/
 
       - name: upload
-        run: gh release upload ${{ needs.create_release.outputs.RELEASE_ID }} palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip
+        run: gh release upload v${{ needs.create_release.outputs.RELEASE_VERSION }} palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip
 
   package_and_upload_windows:
     needs: create_release
@@ -107,5 +107,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v3
       - name: Delete Release
-        run: gh release delete ${{ needs.create_release.outputs.RELEASE_ID }} -y
+        run: gh release delete "v${{ needs.create_release.outputs.RELEASE_VERSION }}" -y
