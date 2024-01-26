@@ -33,13 +33,13 @@ jobs:
     - name: Run tests
       run: cargo test --verbose -- --test-threads=1
 
-  create_release:
+  check_release:
     needs: [test_linux, test_windows]
     runs-on: ubuntu-latest
 
     outputs:
       RELEASE_VERSION: ${{ steps.extract_version.outputs.app_version }}
-      RELEASE_ID: ${{ steps.get_release_id.outputs.id }}
+      RELEASE_EXISTS: ${{ steps.check_release.outputs.release_exists }}
 
     steps:
     - uses: actions/checkout@v3
@@ -50,16 +50,39 @@ jobs:
       with:
          cargo_toml_folder: ./
 
+    - name: Check Release Existence
+      id: check_release
+      run: |
+        release_version="v${{ steps.extract_version.outputs.app_version }}"
+        if gh release view "$release_version" >/dev/null 2>&1; then
+          echo "::set-output name=release_exists::true"
+        else
+          echo "::set-output name=release_exists::false"
+        fi
+
+  create_release:
+    needs: check_release
+    runs-on: ubuntu-latest
+    if: needs.check_release.outputs.RELEASE_EXISTS != 'true'
+
+    outputs:
+      RELEASE_ID: ${{ steps.get_release_id.outputs.id }}
+      RELEASE_VERSION: ${{ needs.check_release.outputs.RELEASE_VERSION }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+
     - name: Create Release
       id: create_release
-      run: gh release create "v${{ steps.extract_version.outputs.app_version }}" -t "v${{ steps.extract_version.outputs.app_version }}" -n "v${{ steps.extract_version.outputs.app_version }}"
+      run: gh release create "v${{ needs.check_release.outputs.RELEASE_VERSION }}" -t "v${{ needs.check_release.outputs.RELEASE_VERSION }}" -n "v${{ needs.check_release.outputs.RELEASE_VERSION }}"
 
     
     - name: Get release ID
       id: get_release_id
       uses: joutvhu/get-release@v1
       with:
-        tag_name: "v${{ steps.extract_version.outputs.app_version }}"
+        tag_name: "v${{ needs.check_release.outputs.RELEASE_VERSION }}"
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
@@ -77,7 +100,7 @@ jobs:
         run: ./build-linux.sh
 
       - name: package
-        run: zip -r palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip build/
+        run: cd build; zip -r ../palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip *; cd ..
 
       - name: upload
         run: gh release upload v${{ needs.create_release.outputs.RELEASE_VERSION }} palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-linux.zip
