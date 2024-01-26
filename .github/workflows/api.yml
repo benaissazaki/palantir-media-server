@@ -35,6 +35,7 @@ jobs:
 
   check_release:
     needs: [test_linux, test_windows]
+    if: github.event_name == 'push' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     outputs:
