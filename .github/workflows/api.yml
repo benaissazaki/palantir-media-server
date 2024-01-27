@@ -119,7 +119,7 @@ jobs:
         run: .\build-windows.ps1
 
       - name: package
-        run: Compress-Archive -Path .\build -DestinationPath .\palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-win64.zip 
+        run: Compress-Archive -Path .\build\* -DestinationPath .\palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-win64.zip 
 
       - name: upload
         run: gh release upload v${{ needs.create_release.outputs.RELEASE_VERSION }} palantir-media-server-v${{ needs.create_release.outputs.RELEASE_VERSION }}-win64.zip
