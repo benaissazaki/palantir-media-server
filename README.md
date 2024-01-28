@@ -17,12 +17,14 @@ Palantir Media Server is a lightweight and efficient media server that allows yo
 }
 ```
 
-3. Launch `palantir-media-server.exe`. By default it runs on the localhost at port 8080. You can specify a different host and port in the command line. E.g:
-```
-palantir-media-server.exe <HOST> <PORT>
-```
+3. Launch `palantir-media-server.exe` (`palantir-media-server` on Linux):
+4. Specify the host and port then click on 'Start server':
 
-4. You can now access the application via browser at the displayed address.
+![image](https://github.com/benaissazaki/palantir-media-server/assets/33980130/5865d513-4cf6-4ae8-b8e8-1bd1a3a8c4e9)
+
+6. You can now access the application via browser at the displayed address:
+
+![image](https://github.com/benaissazaki/palantir-media-server/assets/33980130/55cc3460-00d3-412b-997c-9384b21d4dc0)
 
 
 ## Advancements
