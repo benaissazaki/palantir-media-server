@@ -28,6 +28,19 @@ async fn get_media_files() -> impl Responder {
         .body(serde_json::to_string(&response).unwrap_or_default());
 }
 
+#[get("/subtitles/{directory}")]
+async fn get_subtitles_in_dir(directory: web::Path<String>) -> impl Responder {
+    let subtitles = utils::scan_for_subtitles_in_dir(PathBuf::from(directory.to_string()));
+    let response = MediaFilesResponse {
+        length: subtitles.clone().len(),
+        items: subtitles,
+    };
+    return HttpResponse::Ok()
+        .content_type("application/json")
+        .body(serde_json::to_string(&response).unwrap_or_default());
+}
+
 pub fn init_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(get_media_files);
+    cfg.service(get_subtitles_in_dir);
 }
