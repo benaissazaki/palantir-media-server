@@ -76,7 +76,7 @@ jobs:
 
     - name: Create Release
       id: create_release
-      run: gh release create "v${{ needs.check_release.outputs.RELEASE_VERSION }}" -t "v${{ needs.check_release.outputs.RELEASE_VERSION }}" -n "v${{ needs.check_release.outputs.RELEASE_VERSION }}"
+      run: gh release create "v${{ needs.check_release.outputs.RELEASE_VERSION }}" -t "v${{ needs.check_release.outputs.RELEASE_VERSION }}" -F "CHANGELOG.md"
 
     
     - name: Get release ID
