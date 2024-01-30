@@ -1,14 +1,14 @@
 #[cfg(test)]
 mod tests {
     use crate::server::media_scanner::{
-        routes::get_media_files,
-        tests::tests::helpers::{get_actual_response, get_expected_response, setup, teardown},
+        routes::{get_media_files, get_subtitles_in_dir},
+        tests::tests::helpers::{get_media_actual_response, get_subtitles_actual_response, get_subtitles_expected_response, get_media_expected_response, setup, teardown},
     };
     use actix_web::{test, App};
 
     /// Creates media files and expects the route to return them
     #[actix_web::test]
-    async fn get_returns_correct_files() {
+    async fn get_media_returns_correct_files() {
         setup();
 
         let mut app = test::init_service(App::new().service(get_media_files)).await;
@@ -18,9 +18,30 @@ mod tests {
 
         assert_eq!(res.status(), 200);
 
-        let expected_response = get_expected_response();
+        let expected_response = get_media_expected_response();
 
-        let actual_response = get_actual_response(res).await;
+        let actual_response = get_media_actual_response(res).await;
+
+        teardown();
+        assert_eq!(expected_response, actual_response);
+    }
+
+    // Creates subtitle files and expects the route to return them
+    #[actix_web::test]
+    async fn get_subtitles_returns_correct_files() {
+        setup();
+
+        let mut app = test::init_service(App::new().service(get_subtitles_in_dir)).await;
+
+        let scanned_dir = "testdirs%2Fdir1";
+        let req = test::TestRequest::get().uri(format!("/subtitles/{}", scanned_dir).as_str()).to_request();
+        let res = test::call_service(&mut app, req).await;
+
+        assert_eq!(res.status(), 200);
+
+        let expected_response = get_subtitles_expected_response();
+
+        let actual_response = get_subtitles_actual_response(res).await;
 
         teardown();
         assert_eq!(expected_response, actual_response);
@@ -29,7 +50,7 @@ mod tests {
     mod helpers {
         use crate::{
             server::app_settings::AppSettings,
-            server::media_scanner::utils::{MediaFilesResponse, MEDIA_FILES_EXTENSIONS},
+            server::media_scanner::utils::{MediaFilesResponse, MEDIA_FILES_EXTENSIONS, SUBTITLES_EXTENSION},
         };
         use actix_web::{dev::ServiceResponse, test};
         use std::{
@@ -37,9 +58,10 @@ mod tests {
             path::PathBuf,
         };
 
-        const CREATED_FILES: [&str; 4] = [
+        const CREATED_FILES: [&str; 5] = [
             "testdirs/dir1/test.mp4",
             "testdirs/dir1/test.mp3",
+            "testdirs/dir1/sub.srt",
             "testdirs/dir2/test.txt",
             "testdirs/dir2/test.mkv",
         ];
@@ -53,7 +75,7 @@ mod tests {
             fs::remove_dir_all("testdirs").unwrap();
         }
 
-        pub async fn get_actual_response(response: ServiceResponse) -> MediaFilesResponse {
+        pub async fn get_media_actual_response(response: ServiceResponse) -> MediaFilesResponse {
             let actual_response_str =
                 String::from_utf8((test::read_body(response).await).to_vec()).unwrap();
             let actual_response: MediaFilesResponse =
@@ -62,8 +84,29 @@ mod tests {
             actual_response
         }
 
-        pub fn get_expected_response() -> MediaFilesResponse {
+        pub async fn get_subtitles_actual_response(response: ServiceResponse) -> MediaFilesResponse {
+            let actual_response_str =
+                String::from_utf8((test::read_body(response).await).to_vec()).unwrap();
+            let actual_response: MediaFilesResponse =
+                serde_json::from_str(actual_response_str.as_str()).unwrap();
+
+            actual_response
+        }
+
+        pub fn get_media_expected_response() -> MediaFilesResponse {
             let expected_response: Vec<String> = filter_media_files(&CREATED_FILES)
+                .iter()
+                .map(|f| normalize_path(f))
+                .collect();
+
+            MediaFilesResponse {
+                items: expected_response.clone(),
+                length: expected_response.len(),
+            }
+        }
+
+        pub fn get_subtitles_expected_response() -> MediaFilesResponse {
+            let expected_response: Vec<String> = filter_subtitle_files(&CREATED_FILES)
                 .iter()
                 .map(|f| normalize_path(f))
                 .collect();
@@ -109,6 +152,24 @@ mod tests {
                         .and_then(std::ffi::OsStr::to_str)
                     {
                         MEDIA_FILES_EXTENSIONS.contains(&extension)
+                    } else {
+                        false
+                    }
+                })
+                .copied()
+                .collect()
+        }
+
+        /// Returns only files whose extensions are in `SUBTITLES_EXTENSION`
+        pub fn filter_subtitle_files<'a>(file_paths: &'a [&'a str]) -> Vec<&'a str> {
+            file_paths
+                .iter()
+                .filter(|&&file_path| {
+                    if let Some(extension) = std::path::Path::new(file_path)
+                        .extension()
+                        .and_then(std::ffi::OsStr::to_str)
+                    {
+                        SUBTITLES_EXTENSION.contains(&extension)
                     } else {
                         false
                     }
