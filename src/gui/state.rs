@@ -6,5 +6,5 @@ pub struct AppState {
     pub(crate) host: String,
     pub(crate) port: String,
 
-    pub(crate) start_server_error: bool
+    pub(crate) start_server_error: Option<String>
 }

@@ -58,12 +58,14 @@ mod tests {
             path::PathBuf,
         };
 
-        const CREATED_FILES: [&str; 5] = [
+        const CREATED_FILES: [&str; 7] = [
             "testdirs/dir1/test.mp4",
             "testdirs/dir1/test.mp3",
             "testdirs/dir1/sub.srt",
+            "testdirs/dir1/SUB2.VTT",
             "testdirs/dir2/test.txt",
             "testdirs/dir2/test.mkv",
+            "testdirs/dir2/UPPER.MP4",
         ];
 
         pub fn setup() {
@@ -151,7 +153,7 @@ mod tests {
                         .extension()
                         .and_then(std::ffi::OsStr::to_str)
                     {
-                        MEDIA_FILES_EXTENSIONS.contains(&extension)
+                        MEDIA_FILES_EXTENSIONS.contains(&extension.to_lowercase().as_str())
                     } else {
                         false
                     }
@@ -169,7 +171,7 @@ mod tests {
                         .extension()
                         .and_then(std::ffi::OsStr::to_str)
                     {
-                        SUBTITLES_EXTENSION.contains(&extension)
+                        SUBTITLES_EXTENSION.contains(&extension.to_lowercase().as_str())
                     } else {
                         false
                     }

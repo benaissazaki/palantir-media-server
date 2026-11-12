@@ -11,7 +11,7 @@ const MediaPage = () => {
   const params = useParams<MediaPageParams>();
   const navigate = useNavigate();
 
-  const fileExtension = params.mediaFile?.split('.').pop();
+  const fileExtension = params.mediaFile?.split('.').pop()?.toLowerCase();
 
   let player = null;
   if (['mp4', 'mkv', 'avi'].includes(fileExtension!)) {
