@@ -2,11 +2,16 @@
 mod tests {
     use actix_web::{test, App};
     use serde_json::json;
+    use std::net::SocketAddr;
 
     use crate::server::app_settings::{
         routes::{get_settings, set_settings},
         AppSettings,
     };
+
+    fn local_addr() -> SocketAddr {
+        "127.0.0.1:12345".parse().unwrap()
+    }
 
     #[actix_web::test]
     async fn post_succeeds_with_valid_data() {
@@ -14,6 +19,7 @@ mod tests {
 
         let req = test::TestRequest::post()
             .uri("/setting")
+            .peer_addr(local_addr())
             .set_json(json!({ "media_directories": ["testdir/"]}))
             .to_request();
 
@@ -28,12 +34,28 @@ mod tests {
 
         let req = test::TestRequest::post()
             .uri("/setting")
+            .peer_addr(local_addr())
             .set_json(json!({ "medi_directories": ["testdir/"]}))
             .to_request();
 
         let res = test::call_service(&mut app, req).await;
 
         assert_eq!(res.status(), 400);
+    }
+
+    #[actix_web::test]
+    async fn post_fails_from_remote_address() {
+        let mut app = test::init_service(App::new().service(set_settings)).await;
+
+        let req = test::TestRequest::post()
+            .uri("/setting")
+            .peer_addr("192.168.1.20:12345".parse().unwrap())
+            .set_json(json!({ "media_directories": ["/"]}))
+            .to_request();
+
+        let res = test::call_service(&mut app, req).await;
+
+        assert_eq!(res.status(), 403);
     }
 
     #[actix_web::test]
