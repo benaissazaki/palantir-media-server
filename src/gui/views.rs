@@ -12,7 +12,7 @@ use super::state::AppState;
 impl Sandbox for AppState {
     type Message = ServerControlMessage;
 
-    fn view(&self) -> Element<Self::Message> {
+    fn view(&self) -> Element<'_, Self::Message> {
         let start_server_error = match &self.start_server_error {
             Some(error) => column![text(error)],
             None => column![],

@@ -18,7 +18,6 @@ const VideoPlayer = ({ mediaFile }: VideoPlayerProps) => {
   const [subtitlesList, setSubtitlesList] = useState<string[]>([]);
 
   const fetchSubtitlesList = async () => {
-    console.log(parentDirectory);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/subtitles/${encodeURIComponent(parentDirectory)}`);
       const data: SubtitlesResponse = await response.json();
