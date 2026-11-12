@@ -3,7 +3,6 @@ use std::env;
 
 use std::{sync::mpsc::{self, RecvError}, thread};
 
-use actix_cors::Cors;
 use actix_files::Files;
 use actix_web::{
     dev::ServerHandle,
@@ -57,7 +56,6 @@ pub async fn get_server(
 
     let server = HttpServer::new(move || {
         App::new()
-            .wrap(Cors::default().allow_any_origin().send_wildcard())
             .wrap(middleware::Logger::default())
             .service(
                 web::scope("/api")
