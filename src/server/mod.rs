@@ -1,6 +1,3 @@
-#[cfg(not(debug_assertions))]
-use std::env;
-
 use std::{sync::mpsc::{self, RecvError}, thread};
 
 use actix_files::Files;
@@ -13,7 +10,7 @@ use actix_web::{
 
 use crate::server::react_app::media_route;
 
-mod app_settings;
+pub(crate) mod app_settings;
 mod media_scanner;
 mod media_server;
 mod react_app;
@@ -23,16 +20,6 @@ pub async fn get_server(
     host: String,
     port: u16,
 ) -> std::io::Result<()> {
-    // Set the exe's parent directory to be the working directory if release
-    #[cfg(not(debug_assertions))]
-    if let Ok(exe_path) = env::current_exe() {
-        if let Some(exe_dir) = exe_path.parent() {
-            if let Err(err) = env::set_current_dir(&exe_dir) {
-                eprintln!("Failed to set current directory: {}", err);
-            }
-        }
-    }
-
     #[cfg(debug_assertions)]
     let app_path = "./client/dist";
 

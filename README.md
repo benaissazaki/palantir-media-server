@@ -10,14 +10,8 @@ Palantir Media Server is a lightweight and efficient media server that allows yo
 ## How to use
 
 1. Download the latest release [here](https://github.com/benaissazaki/palantir-media-server/releases/latest).
-2. Specify the directories containing the media files that you want to share in the `app_settings.json` file. E.g: 
-```
-{
-  "media_directories": ["D:\\path\\to\\my\\media_directory"]
-}
-```
-
-3. Launch `palantir-media-server.exe` (`palantir-media-server` on Linux):
+2. Launch `palantir-media-server.exe` (`palantir-media-server` on Linux).
+3. Click on 'Add directory' to select the directories containing the media files that you want to share. They are saved in the `app_settings.json` file.
 4. Specify the host and port then click on 'Start server':
 
 ![image](https://github.com/benaissazaki/palantir-media-server/assets/33980130/5865d513-4cf6-4ae8-b8e8-1bd1a3a8c4e9)
@@ -35,5 +29,4 @@ In the future, the following points will be addressed:
 
 - **Compatibility:** Since the program currently serves the media file as it is, if your browser does not support its format, you won't be able to access it.
 - **User authentication**.
-- **A more user friendly way to configure the server.**
 - **Subtitles for videos**

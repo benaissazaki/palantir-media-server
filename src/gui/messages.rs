@@ -3,5 +3,7 @@ pub enum ServerControlMessage {
     StartServerPressed,
     StopServerPressed,
     HostChanged(String),
-    PortChanged(String)
+    PortChanged(String),
+    AddMediaDirectoryPressed,
+    RemoveMediaDirectoryPressed(usize),
 }
