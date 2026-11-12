@@ -1,13 +1,20 @@
 #[cfg(test)]
 mod tests {
-    use crate::server::{app_settings::AppSettings, media_server::routes::get_media_file};
+    use crate::server::{
+        app_settings::AppSettings,
+        media_server::{routes::get_media_file, utils::srt_to_vtt},
+    };
     use actix_web::{test, App};
     use std::fs::{self, File};
+
+    const SRT_SUBTITLES: &str = "\u{feff}1\r\n00:00:01,000 --> 00:00:02,500\r\nHello, world\r\n\r\n2\r\n00:00:03,000 --> 00:00:04,000\r\nBye\r\n";
+    const VTT_SUBTITLES: &str = "WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.500\nHello, world\n\n2\n00:00:03.000 --> 00:00:04.000\nBye\n";
 
     fn setup() {
         fs::create_dir_all("testdirs/media_dir").unwrap();
         File::create("testdirs/media_dir/test.mp4").unwrap();
         File::create("testdirs/secret.txt").unwrap();
+        fs::write("testdirs/media_dir/sub.srt", SRT_SUBTITLES).unwrap();
 
         let mut settings = AppSettings::instance().lock().unwrap();
         settings.media_directories = vec!["testdirs/media_dir".to_string()];
@@ -54,5 +61,30 @@ mod tests {
         teardown();
 
         assert_eq!(status, 404);
+    }
+
+    /// Converts SRT timestamps and line endings without touching the subtitles' text
+    #[actix_web::test]
+    async fn srt_to_vtt_converts_subtitles() {
+        assert_eq!(srt_to_vtt(SRT_SUBTITLES), VTT_SUBTITLES);
+    }
+
+    /// Serves SRT subtitles as WebVTT
+    #[actix_web::test]
+    async fn get_media_file_serves_srt_as_vtt() {
+        setup();
+        let app = test::init_service(App::new().service(get_media_file)).await;
+        let req = test::TestRequest::get()
+            .uri("/media/testdirs%2Fmedia_dir%2Fsub.srt")
+            .to_request();
+        let res = test::call_service(&app, req).await;
+        let status = res.status().as_u16();
+        let content_type = res.headers().get("content-type").unwrap().to_str().unwrap().to_string();
+        let body = test::read_body(res).await;
+        teardown();
+
+        assert_eq!(status, 200);
+        assert_eq!(content_type, "text/vtt; charset=utf-8");
+        assert_eq!(body, VTT_SUBTITLES);
     }
 }

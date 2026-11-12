@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use crate::server::media_server;
 
 pub const MEDIA_FILES_EXTENSIONS: &'static [&'static str] = &["mp3", "mp4", "avi", "wav", "mkv"];
-pub const SUBTITLES_EXTENSION: &'static [&'static str] = &["srt", "sub", "ssa", "smi", "vtt"];
+pub const SUBTITLES_EXTENSION: &'static [&'static str] = &["srt", "vtt"];
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MediaFilesResponse {
