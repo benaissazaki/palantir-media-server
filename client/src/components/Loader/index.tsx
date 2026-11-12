@@ -1,7 +1,7 @@
 import style from './Loader.module.css';
 
 const Loader = () => (
-  <img id={style.loader} src="/icons/loader.svg" />
+  <div className={style.loader} role="status" aria-label="Loading" />
 );
 
 export default Loader;

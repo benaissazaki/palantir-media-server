@@ -1,9 +1,58 @@
-#previous {
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  color: var(--muted);
+  font-size: 14px;
+  transition: color 120ms ease;
 }
 
-#previous img {
-  width: 50px;
+.back:hover {
+  color: var(--text);
+}
+
+.player {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--surface);
+}
+
+.title {
+  margin-top: 20px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.path {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.audio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 48px 24px;
+}
+
+.audioIcon {
+  color: var(--accent);
+}
+
+.audio audio {
+  width: 100%;
+  max-width: 520px;
+}
+
+.unsupported {
+  padding: 48px 24px;
+  color: var(--muted);
+  text-align: center;
 }

@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import VideoPlayer from '../../components/VideoPlayer';
+import { getMediaKind } from '../../components/MediaList/helpers';
+import { ArrowLeftIcon, AudioIcon } from '../../components/Icons';
 import style from './MediaPage.module.css';
 
 type MediaPageParams = {
@@ -8,31 +9,45 @@ type MediaPageParams = {
 };
 
 const MediaPage = () => {
-  const params = useParams<MediaPageParams>();
-  const navigate = useNavigate();
+  const { mediaFile = '' } = useParams<MediaPageParams>();
 
-  const fileExtension = params.mediaFile?.split('.').pop()?.toLowerCase();
+  const pathSeparator = mediaFile.includes('\\') ? '\\' : '/';
+  const pathSegments = mediaFile.split(pathSeparator);
+  const fileName = pathSegments.pop() ?? mediaFile;
+  const parentDirectory = pathSegments.join(pathSeparator) || pathSeparator;
 
-  let player = null;
-  if (['mp4', 'mkv', 'avi'].includes(fileExtension!)) {
-    player = <VideoPlayer mediaFile={params.mediaFile!} />;
-  } else if (['mp3', 'wav'].includes(fileExtension!)) {
-    player = <audio src={`${import.meta.env.VITE_API_BASE_URL}/api/media/${encodeURIComponent(params.mediaFile!)}`} controls />;
-  } else {
-    player = <div>Unsupported format</div>;
+  const mediaUrl = `${import.meta.env.VITE_API_BASE_URL}/api/media/${encodeURIComponent(mediaFile)}`;
+
+  let player;
+  switch (getMediaKind(fileName)) {
+    case 'video':
+      player = <VideoPlayer mediaFile={mediaFile} />;
+      break;
+    case 'audio':
+      player = (
+        <div className={style.audio}>
+          <AudioIcon width={40} height={40} className={style.audioIcon} />
+          <audio src={mediaUrl} controls autoPlay />
+        </div>
+      );
+      break;
+    default:
+      player = <p className={style.unsupported}>This format is not supported.</p>;
   }
+
   return (
-    <>
-      <button id={style.previous} onClick={() => navigate(-1)}>
-        <img src="/icons/arrow-left.svg" alt="Previous" />
-      </button>
-      <div id={style.player_container}>
+    <article>
+      <Link to="/" className={style.back}>
+        <ArrowLeftIcon width={16} height={16} />
+        Library
+      </Link>
+      <div className={style.player}>
         {player}
       </div>
-
-    </>
+      <h1 className={style.title}>{fileName}</h1>
+      <p className={style.path}>{parentDirectory}</p>
+    </article>
   );
-
 };
 
 export default MediaPage;
