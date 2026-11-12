@@ -6,6 +6,25 @@ export type FileNode = {
 };
 
 /**
+ * Joins a parent path and a segment without doubling the separator after a root such as '/'.
+ */
+function joinPath(parent: string, segment: string, pathSeparator: string): string {
+  if (!parent) {
+    return segment;
+  }
+  return parent.endsWith(pathSeparator) ? parent + segment : parent + pathSeparator + segment;
+}
+
+/**
+ * Splits a path into segments, keeping the leading '/' of absolute Unix paths as the root segment.
+ */
+function splitPath(path: string): string[] {
+  const segments = path.split(/[\\/]/);
+  const root = segments[0] === '' ? ['/'] : [];
+  return [...root, ...segments.filter(segment => segment !== '')];
+}
+
+/**
  * Recursively fills the tree with FileNode objects based on the given path segments.
  * @param tree The current tree node to fill.
  * @param pathSegments An array of path segments representing a file path.
@@ -21,7 +40,7 @@ function buildTreeFromPaths(tree: FileNode, pathSegments: string[], isWindowsPat
     // If there is no matching child node, create a new FileNode and add it as a child to the current node.
     const newNode: FileNode = {
       name: pathSegments[0],
-      url: `${tree.url && (tree.url + pathSeparator)}${pathSegments[0]}`,
+      url: joinPath(tree.url, pathSegments[0], pathSeparator),
       children: [],
     };
     tree.children.push(newNode);
@@ -44,7 +63,7 @@ export function constructFileTree(paths: string[]): FileNode {
     children: [],
   };
 
-  paths.forEach(path => buildTreeFromPaths(tree, path.split(/[\\/]/), path.includes('\\'))); // Build the tree by splitting each path into path segments and filling the tree.
+  paths.forEach(path => buildTreeFromPaths(tree, splitPath(path), path.includes('\\'))); // Build the tree by splitting each path into path segments and filling the tree.
 
   return tree;
 }
