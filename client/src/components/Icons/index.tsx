@@ -59,3 +59,19 @@ export const ArrowLeftIcon = (props: IconProps) => (
     <path d="m12 19-7-7 7-7" />
   </Icon>
 );
+
+export const AlertIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 8v4.5" />
+    <path d="M12 16h.01" />
+  </Icon>
+);
+
+export const DownloadIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M12 4v11" />
+    <path d="m7 10 5 5 5-5" />
+    <path d="M5 20h14" />
+  </Icon>
+);

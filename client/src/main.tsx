@@ -5,6 +5,9 @@ import './index.css';
 import HomePage from './pages/HomePage';
 import AppLayout from './layouts/AppLayout';
 import MediaPage from './pages/MediaPage';
+import { saveCapabilities } from './capabilities';
+
+saveCapabilities();
 
 const router = createBrowserRouter([
   {
