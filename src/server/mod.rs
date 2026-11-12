@@ -52,7 +52,7 @@ pub async fn get_server(
     let app_path = "./client/dist";
 
     #[cfg(not(debug_assertions))]
-    let app_path = ".";
+    let app_path = "./client";
 
     let server = HttpServer::new(move || {
         App::new()

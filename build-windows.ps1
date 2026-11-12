@@ -5,7 +5,7 @@ Set-Location -Path .\client
 pnpm install --reporter silent
 
 # Run 'pnpm run build'
-pnpm run build --emptyOutDir --outDir ..\build
+pnpm run build --emptyOutDir --outDir ..\build\client
 
 # Change directory back to the root
 Set-Location -Path ..

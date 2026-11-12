@@ -9,7 +9,7 @@ pub async fn media_route() -> impl Responder {
   let app_path = PathBuf::from("./client/dist/index.html");
 
   #[cfg(not(debug_assertions))]
-  let app_path = PathBuf::from("./index.html");
+  let app_path = PathBuf::from("./client/index.html");
 
   NamedFile::open(app_path)
 }
