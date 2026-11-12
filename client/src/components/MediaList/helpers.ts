@@ -61,9 +61,8 @@ export function getNodeIcon(node: FileNode): string {
   }
 
   if (['mp3', 'wav'].includes(fileExtension!)) {
-    return '/icons/video.svg';
+    return '/icons/audio.svg';
   }
 
-  throw new Error('No matching icon');
-  
+  return '/icons/media-not-found.svg';
 }
