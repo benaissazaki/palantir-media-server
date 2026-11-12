@@ -1,9 +1,27 @@
 .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 64px;
+  padding: 48px 24px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
   text-align: center;
-  color: #c2c2c2;
-  margin-top: 150px;
 }
 
-.container img {
-  max-width: 100px;
+.icon {
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.text {
+  max-width: 360px;
+  color: var(--muted);
+  font-size: 14px;
 }

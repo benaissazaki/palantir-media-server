@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 export type FileNode = {
   name: string,
   url: string,
@@ -68,20 +67,79 @@ export function constructFileTree(paths: string[]): FileNode {
   return tree;
 }
 
-export function getNodeIcon(node: FileNode): string {
-  if (node.children.length != 0) {
-    return '/icons/directory.svg';
+export type MediaKind = 'video' | 'audio' | 'unknown';
+
+/**
+ * Returns the kind of media of a file based on its extension.
+ */
+export function getMediaKind(fileName: string): MediaKind {
+  const fileExtension = fileName.split('.').pop()?.toLowerCase() ?? '';
+
+  if (['mp4', 'mkv', 'avi'].includes(fileExtension)) {
+    return 'video';
   }
 
-  const fileExtension = node.name.split('.').pop()?.toLowerCase();
-
-  if (['mp4', 'mkv', 'avi'].includes(fileExtension!)) {
-    return '/icons/video.svg';
+  if (['mp3', 'wav'].includes(fileExtension)) {
+    return 'audio';
   }
 
-  if (['mp3', 'wav'].includes(fileExtension!)) {
-    return '/icons/audio.svg';
+  return 'unknown';
+}
+
+export function isDirectory(node: FileNode): boolean {
+  return node.children.length !== 0;
+}
+
+/**
+ * Sorts directories before files, then by name with numbers in natural order (2 before 10).
+ */
+function compareNodes(a: FileNode, b: FileNode): number {
+  if (isDirectory(a) !== isDirectory(b)) {
+    return isDirectory(a) ? -1 : 1;
+  }
+  return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+}
+
+/**
+ * Merges directories that only contain a single directory into one node
+ * so that e.g. '/' > 'home' > 'user' > 'Movies' is displayed as '/home/user/Movies'.
+ */
+export function compressTree(node: FileNode): FileNode {
+  let current = node;
+  let name = node.name;
+
+  while (current.name !== '$root' && current.children.length === 1 && isDirectory(current.children[0])) {
+    const child = current.children[0];
+    const pathSeparator = child.url.includes('\\') ? '\\' : '/';
+    name = name.endsWith(pathSeparator) ? name + child.name : name + pathSeparator + child.name;
+    current = child;
   }
 
-  return '/icons/media-not-found.svg';
+  return {
+    name,
+    url: current.url,
+    children: current.children.map(compressTree).sort(compareNodes),
+  };
+}
+
+/**
+ * Returns the deepest directory containing all the files, so that the tree
+ * starts at the media directories instead of the filesystem's root.
+ */
+export function findLibraryRoot(tree: FileNode): FileNode {
+  let current = tree;
+  while (current.children.length === 1 && isDirectory(current.children[0])) {
+    [current] = current.children;
+  }
+  return current;
+}
+
+/**
+ * Counts the files (leaf nodes) in the tree.
+ */
+export function countFiles(node: FileNode): number {
+  if (!isDirectory(node)) {
+    return node.name === '$root' ? 0 : 1;
+  }
+  return node.children.reduce((count, child) => count + countFiles(child), 0);
 }

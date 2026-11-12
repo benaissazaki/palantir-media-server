@@ -1,3 +1,45 @@
-* {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+:root {
+  --background: #0f1115;
+  --surface: #171a21;
+  --surface-hover: #1d2129;
+  --border: #262a33;
+  --text: #e7e9ee;
+  --muted: #8a909c;
+  --accent: #7c8cff;
+  --radius: 12px;
+
+  color-scheme: dark;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--background);
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }

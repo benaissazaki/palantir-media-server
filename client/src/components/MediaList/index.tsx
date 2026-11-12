@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import TreeNode from './TreeNode';
-import { FileNode, constructFileTree } from './helpers';
+import {
+  FileNode, compressTree, constructFileTree, countFiles, findLibraryRoot,
+} from './helpers';
 import Loader from '../Loader';
 import EmptyList from './EmptyList';
+import style from './MediaList.module.css';
 
 type MediaFilesResponse = {
   length: number,
@@ -11,19 +14,21 @@ type MediaFilesResponse = {
 
 const MediaList = () => {
   const [mediaFilesTree, setMediaFilesTree] = useState<FileNode>({ name: '$root', url: '', children: [] });
+  const [libraryPath, setLibraryPath] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchMediaFilesList = async () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/media`);
       const data: MediaFilesResponse = await response.json();
-      setMediaFilesTree(constructFileTree(data.items));
+      const libraryRoot = findLibraryRoot(constructFileTree(data.items));
+      setLibraryPath(libraryRoot.url);
+      setMediaFilesTree(compressTree({ ...libraryRoot, name: '$root' }));
     } catch (error) {
       console.error('Error fetching media directories:', error);
     } finally {
       setIsLoading(false);
     }
-
   };
 
   useEffect(() => {
@@ -31,18 +36,29 @@ const MediaList = () => {
   }, []);
 
   if (isLoading) {
-    return (
-      <Loader />
-    );
-  } else if (mediaFilesTree.children.length === 0) {
-    return (
-      <EmptyList />
-    );
-  } else {
-    return (
-      <TreeNode tree={mediaFilesTree} />
-    );
+    return <Loader />;
   }
+
+  if (mediaFilesTree.children.length === 0) {
+    return <EmptyList />;
+  }
+
+  const filesCount = countFiles(mediaFilesTree);
+
+  return (
+    <section>
+      <div className={style.heading}>
+        <div className={style.titles}>
+          <h1 className={style.title}>Library</h1>
+          {libraryPath && <p className={style.path} title={libraryPath}>{libraryPath}</p>}
+        </div>
+        <p className={style.count}>{filesCount} {filesCount === 1 ? 'file' : 'files'}</p>
+      </div>
+      <div className={style.card}>
+        <TreeNode tree={mediaFilesTree} />
+      </div>
+    </section>
+  );
 };
 
 export default MediaList;

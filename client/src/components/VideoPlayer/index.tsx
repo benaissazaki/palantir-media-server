@@ -38,10 +38,12 @@ const VideoPlayer = ({ mediaFile }: VideoPlayerProps) => {
         mediaFile,
       )}`}
       controls
+      autoPlay
     >
       {subtitlesList.map((subtitleTrack) => (
         <track
           key={subtitleTrack}
+          kind="subtitles"
           label={subtitleTrack.split(pathSeparator).pop()}
           src={`${import.meta.env.VITE_API_BASE_URL}/api/media/${encodeURIComponent(
             subtitleTrack,
