@@ -13,9 +13,9 @@ impl Sandbox for AppState {
     type Message = ServerControlMessage;
 
     fn view(&self) -> Element<Self::Message> {
-        let start_server_error = match self.start_server_error {
-            true => column![text("Error starting the server")],
-            false => column![],
+        let start_server_error = match &self.start_server_error {
+            Some(error) => column![text(error)],
+            None => column![],
         };
 
         let state = match self.server_handle {
@@ -72,7 +72,7 @@ impl Sandbox for AppState {
             server_handle: None,
             host: "127.0.0.1".to_string(),
             port: "8080".to_string(),
-            start_server_error: false,
+            start_server_error: None,
         }
     }
 
@@ -83,17 +83,27 @@ impl Sandbox for AppState {
     fn update(&mut self, message: Self::Message) {
         match message {
             ServerControlMessage::StartServerPressed => {
-                match launch_server(self.host.clone(), str::parse(self.port.as_str()).unwrap()) {
+                let port = match self.port.parse::<u16>() {
+                    Ok(port) => port,
+                    Err(_) => {
+                        self.start_server_error = Some("Invalid port".to_string());
+                        return;
+                    }
+                };
+
+                match launch_server(self.host.clone(), port) {
                     Ok(server_handle) => {
                         self.server_handle = Some(server_handle);
-                        self.start_server_error = false;
+                        self.start_server_error = None;
                     }
-                    Err(_) => self.start_server_error = true,
+                    Err(_) => {
+                        self.start_server_error = Some("Error starting the server".to_string())
+                    }
                 };
             }
             ServerControlMessage::StopServerPressed => {
                 rt::System::new().block_on(self.server_handle.as_ref().unwrap().stop(true));
-                self.start_server_error = false;
+                self.start_server_error = None;
                 self.server_handle = None;
             }
             ServerControlMessage::HostChanged(host) => {
