@@ -1,3 +1,17 @@
+# v1.2.0
+
+## What's changed?
+### Configure media directories from the app
+Media directories can now be added with the "Add directory" button and removed from the list, without editing `app_settings.json` by hand. Changes are saved immediately.
+
+### New look
+- The desktop app has been redesigned with a dark theme, a server status indicator and the address to open in the browser.
+- The web interface has been redesigned: the library is displayed as a sorted folder tree starting at your media directories, and media pages have a cleaner player with the file name and its folder.
+- Videos start playing as soon as they are opened.
+
+### Fixes
+- The settings file is now found when the app is launched from another directory.
+
 # v1.1.1
 
 ## What's changed?
