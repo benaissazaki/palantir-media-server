@@ -56,9 +56,9 @@ jobs:
       run: |
         release_version="v${{ steps.extract_version.outputs.app_version }}"
         if gh release view "$release_version" >/dev/null 2>&1; then
-          echo "::set-output name=release_exists::true"
+          echo "release_exists=true" >> "$GITHUB_OUTPUT"
         else
-          echo "::set-output name=release_exists::false"
+          echo "release_exists=false" >> "$GITHUB_OUTPUT"
         fi
 
   create_release:
