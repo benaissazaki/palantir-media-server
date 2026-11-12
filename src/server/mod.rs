@@ -10,7 +10,7 @@ use actix_web::{
 
 use crate::server::react_app::media_route;
 
-mod app_settings;
+pub(crate) mod app_settings;
 mod media_scanner;
 mod media_server;
 mod react_app;

@@ -1,13 +1,70 @@
 use actix_web::rt;
 use iced::{
-    widget::{button, column, container, row, text, text_input},
+    widget::{button, column, container, row, scrollable, text, text_input, Column},
     Alignment, Element, Length, Sandbox,
 };
 
-use crate::server::launch_server;
+use crate::server::{app_settings::AppSettings, launch_server};
 
 use super::messages::ServerControlMessage;
 use super::state::AppState;
+
+impl AppState {
+    /// Applies `change` to the `media_directories` setting and saves the settings
+    fn update_media_directories(&mut self, change: impl FnOnce(&mut Vec<String>)) {
+        let mut settings = AppSettings::instance().lock().unwrap();
+        change(&mut settings.media_directories);
+
+        self.settings_error = match settings.save() {
+            Ok(_) => None,
+            Err(_) => Some("Error saving the settings".to_string()),
+        };
+    }
+
+    fn media_directories_view(&self) -> Element<'_, ServerControlMessage> {
+        let media_directories = AppSettings::instance()
+            .lock()
+            .unwrap()
+            .media_directories
+            .clone();
+
+        let list: Element<'_, ServerControlMessage> = if media_directories.is_empty() {
+            text("No media directory").into()
+        } else {
+            let rows = media_directories.into_iter().enumerate().map(|(index, dir)| {
+                row![
+                    text(dir).width(Length::Fill),
+                    button("Remove")
+                        .on_press(ServerControlMessage::RemoveMediaDirectoryPressed(index))
+                        .padding(5)
+                ]
+                .spacing(20)
+                .align_items(Alignment::Center)
+                .into()
+            });
+            scrollable(Column::with_children(rows.collect()).spacing(10).padding(10))
+                .height(Length::Fixed(200.0))
+                .into()
+        };
+
+        let settings_error = match &self.settings_error {
+            Some(error) => column![text(error)],
+            None => column![],
+        };
+
+        column![
+            text("Media directories:"),
+            list,
+            settings_error,
+            button("Add directory")
+                .on_press(ServerControlMessage::AddMediaDirectoryPressed)
+                .padding(10)
+        ]
+        .spacing(20)
+        .align_items(Alignment::Center)
+        .into()
+    }
+}
 
 impl Sandbox for AppState {
     type Message = ServerControlMessage;
@@ -54,10 +111,15 @@ impl Sandbox for AppState {
         ]
         .spacing(20);
 
-        let col = column![start_server_error, state, settings]
-            .width(300)
-            .spacing(20)
-            .align_items(Alignment::Center);
+        let col = column![
+            start_server_error,
+            state,
+            settings,
+            self.media_directories_view()
+        ]
+        .width(500)
+        .spacing(20)
+        .align_items(Alignment::Center);
 
         container(col)
             .width(Length::Fill)
@@ -73,6 +135,7 @@ impl Sandbox for AppState {
             host: "127.0.0.1".to_string(),
             port: "8080".to_string(),
             start_server_error: None,
+            settings_error: None,
         }
     }
 
@@ -111,6 +174,27 @@ impl Sandbox for AppState {
             }
             ServerControlMessage::PortChanged(port) => {
                 self.port = port;
+            }
+            ServerControlMessage::AddMediaDirectoryPressed => {
+                let picked_directory = rfd::FileDialog::new()
+                    .set_title("Select a media directory")
+                    .pick_folder();
+
+                if let Some(directory) = picked_directory {
+                    let directory = directory.to_string_lossy().into_owned();
+                    self.update_media_directories(|dirs| {
+                        if !dirs.contains(&directory) {
+                            dirs.push(directory);
+                        }
+                    });
+                }
+            }
+            ServerControlMessage::RemoveMediaDirectoryPressed(index) => {
+                self.update_media_directories(|dirs| {
+                    if index < dirs.len() {
+                        dirs.remove(index);
+                    }
+                });
             }
         }
     }
