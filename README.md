@@ -40,15 +40,18 @@ You have a folder of movies on your computer and want to watch one on your phone
 <table>
   <tr>
     <td width="62%"><img src="docs/assets/library.png" alt="Media library" /></td>
-    <td><img src="docs/assets/desktop-app.png" alt="Desktop app" /></td>
+    <td width="38%"><img src="docs/assets/desktop-app.png" alt="Desktop app" /></td>
   </tr>
   <tr>
     <td align="center"><sub>Browse your library as a folder tree</sub></td>
     <td align="center"><sub>Pick folders and start the server</sub></td>
   </tr>
+</table>
+
+<table>
   <tr>
-    <td><img src="docs/assets/player.png" alt="Video player with subtitles" /></td>
-    <td><img src="docs/assets/mobile.png" alt="Mobile library" /></td>
+    <td width="71%"><img src="docs/assets/player.png" alt="Video player with subtitles" /></td>
+    <td width="29%"><img src="docs/assets/mobile.png" alt="Mobile library" /></td>
   </tr>
   <tr>
     <td align="center"><sub>Watch with subtitles, right in the browser</sub></td>
@@ -88,11 +91,10 @@ Subtitles are matched to videos in the same folder and can be picked from the pl
 
 ```mermaid
 flowchart LR
-    app["<b>Desktop app</b><br/>Rust · iced"] -- "starts" --> server["<b>HTTP server</b><br/>actix-web"]
-    app -- "saves folders" --> settings[("app_settings.json")]
-    settings -- "reads" --> server
-    server -- "library · streams · subtitles" --> browser["<b>Any browser</b><br/>on your network"]
-    browser -- "HTTP range requests" --> server
+    App[Desktop app] -->|starts| Server[HTTP server]
+    App -->|saves folders| Settings[(app_settings.json)]
+    Settings -->|reads| Server
+    Browser[Any browser on your network] <-->|library, streams, subtitles| Server
 ```
 
 - The **desktop app** stores your folders in `app_settings.json`, next to the executable.
