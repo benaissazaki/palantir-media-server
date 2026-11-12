@@ -54,7 +54,7 @@ export function getNodeIcon(node: FileNode): string {
     return '/icons/directory.svg';
   }
 
-  const fileExtension = node.name.split('.').pop();
+  const fileExtension = node.name.split('.').pop()?.toLowerCase();
 
   if (['mp4', 'mkv', 'avi'].includes(fileExtension!)) {
     return '/icons/video.svg';

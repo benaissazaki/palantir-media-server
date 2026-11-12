@@ -44,7 +44,7 @@ fn scan_directory_for_extensions(dir_path: PathBuf, extensions:  &'static [&'sta
         } else {
             if let Some(ext) = path.extension() {
                 if let Some(ext_str) = ext.to_str() {
-                    if extensions.contains(&ext_str) {
+                    if extensions.contains(&ext_str.to_lowercase().as_str()) {
                         files.push(
                             path.canonicalize()
                                 .unwrap_or(path)
