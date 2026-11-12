@@ -18,21 +18,6 @@ mod media_scanner;
 mod media_server;
 mod react_app;
 
-fn get_host_and_port() -> (String, u16) {
-    let mut args = std::env::args().skip(1);
-
-    let host = args.next().unwrap_or("127.0.0.1".to_string());
-    let port = match args.next() {
-        Some(p) => match p.parse::<u16>() {
-            Ok(port) => port,
-            Err(_) => 8080,
-        },
-        None => 8080,
-    };
-
-    (host, port)
-}
-
 pub async fn get_server(
     tx: mpsc::Sender<ServerHandle>,
     host: String,
