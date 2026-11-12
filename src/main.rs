@@ -1,4 +1,4 @@
-use iced::{Sandbox, Settings};
+use iced::{window, Sandbox, Settings};
 use crate::gui::state::AppState;
 
 mod server;
@@ -16,5 +16,12 @@ pub fn main() -> iced::Result {
         }
     }
 
-    AppState::run(Settings::default())
+    AppState::run(Settings {
+        window: window::Settings {
+            size: (560, 680),
+            min_size: Some((440, 560)),
+            ..window::Settings::default()
+        },
+        ..Settings::default()
+    })
 }
