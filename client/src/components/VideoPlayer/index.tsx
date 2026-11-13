@@ -3,6 +3,7 @@ import style from './VideoPlayer.module.css';
 
 type VideoPlayerProps = {
   mediaFile: string;
+  onError?: () => void;
 };
 
 type SubtitlesResponse = {
@@ -10,7 +11,7 @@ type SubtitlesResponse = {
   items: string[]
 };
 
-const VideoPlayer = ({ mediaFile }: VideoPlayerProps) => {
+const VideoPlayer = ({ mediaFile, onError }: VideoPlayerProps) => {
   const pathSeparator = mediaFile.includes('\\') ? '\\' : '/';
 
   const parentDirectory = mediaFile.split(pathSeparator).slice(0, -1).join(pathSeparator);
@@ -39,6 +40,7 @@ const VideoPlayer = ({ mediaFile }: VideoPlayerProps) => {
       )}`}
       controls
       autoPlay
+      onError={onError}
     >
       {subtitlesList.map((subtitleTrack) => (
         <track

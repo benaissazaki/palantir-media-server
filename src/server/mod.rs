@@ -13,6 +13,7 @@ use crate::server::react_app::media_route;
 pub(crate) mod app_settings;
 mod media_scanner;
 mod media_server;
+mod playback;
 mod react_app;
 
 pub async fn get_server(
@@ -33,7 +34,8 @@ pub async fn get_server(
                 web::scope("/api")
                     .configure(app_settings::init_routes)
                     .configure(media_scanner::init_routes)
-                    .configure(media_server::init_routes),
+                    .configure(media_server::init_routes)
+                    .configure(playback::init_routes),
             )
             .service(media_route)
             .service(Files::new("/", app_path).index_file("index.html"))

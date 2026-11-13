@@ -51,8 +51,85 @@
   max-width: 520px;
 }
 
-.unsupported {
+.unknown {
   padding: 48px 24px;
   color: var(--muted);
   text-align: center;
+}
+
+.checking {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  max-height: 75vh;
+}
+
+.unsupported {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 280px;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.unsupportedIcon {
+  margin-bottom: 8px;
+  color: #f87171;
+}
+
+.unsupportedTitle {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.unsupportedReason {
+  max-width: 460px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.primaryButton {
+  border-color: var(--accent);
+  background-color: var(--accent);
+  color: var(--background);
+}
+
+.primaryButton:hover {
+  background-color: #8f9cff;
+}
+
+.secondaryButton {
+  background-color: var(--surface-hover);
+  color: var(--text);
+}
+
+.secondaryButton:hover {
+  border-color: #3a3f4a;
 }
